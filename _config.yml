@@ -59,7 +59,7 @@ plugins:
 author:
   name   : "John McEwan"
   avatar : "/assets/images/bio-photo.png"
-  bio    : "A cyber security blog."
+  bio    : "I am a Cyber Security and Networks student at Glasgow Caledonian University."
   links:
 #    - label: "Website"
 #      icon: "fas fa-fw fa-link"

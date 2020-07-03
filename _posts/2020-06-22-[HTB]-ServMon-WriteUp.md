@@ -9,7 +9,7 @@ tags:
   - WriteUp
 ---
 
-![](/assets/servmon/servmon.jpg)
+![](./assets/servmon/servmon.jpg)
 
 * OS: Windows
 * Difficulty: Easy
