@@ -39,7 +39,7 @@ I used BurpSuite to change the User agent to `Mozilla/4.0 (compatible; MSIE 4.0;
 * Points: 75
 * Solves: 1375
 
-![Ascii Ghost](/assets/Nahamconctf/localghost.jpg)
+![Ascii Ghost]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/localghost.jpg)
 
 The web page has an ascii art ghost, which scrolls infinitely. By looking at the source code we find that the infinite scrolling is done using javascript /jquery.jscroll2.js.
 
@@ -96,7 +96,7 @@ The code sets the item "flag" to the string `SkNURntzcG9vb29va3lfZ2hvc3RzX2luX3N
 
 Another way to solve this challenge is to simply use chrome dev tools, where the flag is stored in Local Storage.
 
-![Local Ghost](/assets/Nahamconctf/localflag.jpg)
+![Local Ghost]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/localflag.jpg)
 {: .full}
 
 ***
@@ -116,7 +116,7 @@ The phonebook is located at phphonebook.php
 
 I first tried going directly to phphonebook.php and got the following page: 
 
-![phphonebook](/assets/Nahamconctf/phonebook.jpg)
+![phphonebook]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/phonebook.jpg)
 
 I then tried going to /index.php/?file=phphonebook.php and got the same page. I realised quickly that it was a local file inclusion, but spent too long trying to look for other files, like a flag.php, which doesnt exist. 
 
@@ -195,11 +195,11 @@ We can use BurpSuite to add the line `emergency=123` to the body of the POST req
 We are given a nc session to join `nc jh2i.com 50011` and a binary to download called dangerous.
 When we run dangerous it asks for a name and then prints the name along with an ascii sword
 
-![Its dangerous to go alone](/assets/Nahamconctf/dangerous.jpg)
+![Its dangerous to go alone]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/dangerous.jpg)
 
 First step is to cause a segmentation fault by overflowing the buffer, to this just input a large number of characters, I started with 100 and increased from there. At 500 we get our segmentation fault.
 
-![segfault](/assets/Nahamconctf/segfault.jpg)
+![segfault]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/segfault.jpg)
 
 We can use pattern_create and pattern_offset from msf to find the correct input length, which is 497. 
 
@@ -216,7 +216,7 @@ buff = 'A' * 497
 print buff + vulnfunc
 ```
 
-![DangerFlag](/assets/Nahamconctf/dangerflag.jpg)
+![DangerFlag]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/dangerflag.jpg)
 
 ***
 
@@ -274,7 +274,7 @@ flag{we_should_have_been_worried_about_u2k_not_y2k}
 
 We are given an image
 
-![luke](/assets/Nahamconctf/luke.jpg)
+![luke]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/luke.jpg)
 
 The challenge name and clue suggest we use a common stegonography tool called Jsteg
 
@@ -292,7 +292,7 @@ flag{yeast_bit_stegonography_oops_another_typo}
 * Points: 50
 * Solves: 516
 
-![Doh!](/assets/Nahamconctf/doh.jpg)
+![Doh!]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/doh.jpg)
 
 This time running steghide extract with no password will find flag.txt
 
@@ -314,7 +314,7 @@ JCTF{an_annoyed_grunt}
 
 The challenge name suggests Instagram, so I looked the username and the flag is in the account bio.
 
-![Insta](/assets/Nahamconctf/insta.jpg)
+![Insta]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/insta.jpg)
 
 ***
 
@@ -371,7 +371,7 @@ Note: Using grep will only find the first half of the flag
 * Points: 25
 * Solves: 2019
 
-![HackerMeme](/assets/Nahamconctf/hackermeme.jpg)
+![HackerMeme]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/hackermeme.jpg)
 
 Running string on the image will give us the flag 
 
@@ -401,7 +401,7 @@ strings hackermeme.jpg | grep flag
 
 If we edit the cookie on the page to set user to admin, we get "you are logged in as nqzva." This is the rot 13 of admin to setting the cookie to nqzva and refreshing will give us the flag.
 
-![admin](/assets/Nahamconctf/admin.jpg)
+![admin]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/admin.jpg)
 
 ***
 
@@ -431,7 +431,7 @@ I used PCRT to fix the image
 ```bash
 python PCRT.py -i pang.png -o pong.png
 ```
-![pong](/assets/Nahamconctf/pong.png)
+![pong]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/pong.png)
 
 
 

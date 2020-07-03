@@ -12,11 +12,11 @@ tags:
 
 So you want to hack some boxes? Well first you have to sign up.
 
-![HTB Invite](/assets/SigningUp/HTB_invite_screen.png)
+![HTB Invite]({{ site.url }}{{ site.baseurl }}/assets/SigningUp/HTB_invite_screen.png)
 
 We are told that to get an invite code we have to hack the page. Lets have a look at the console. In Chrome press f12 to bring up dev tools and click on the console tab.
 
-![Console](/assets/SigningUp/console_message.png)
+![Console]({{ site.url }}{{ site.baseurl }}/assets/SigningUp/console_message.png)
 
 "This page loads an interesting javascript file." That sounds interesting, lets have a look at the javascript files that the page loads. Click on the sources tab and have a look in the js folder.
 
@@ -52,13 +52,13 @@ function makeInviteCode() {
 
 Thats much nicer, makeInviteCode() is a function. So lets call that function by typing it into the console.
 
-![makeInviteCode](/assets/SigningUp/makeinvitecode.png)
+![makeInviteCode]({{ site.url }}{{ site.baseurl }}/assets/SigningUp/makeinvitecode.png)
 
 We get some data!
 
 The data is encrypted so we need to decrypt it, we can see that the "enctype" is BASE64 so lets head over to [CyberChef](https://gchq.github.io/CyberChef/) (There are simpler tools to decode BASE64 online, however cyberchef is a very powerful tool and I would recommend learning it).
 
-![Cyberchef](/assets/SigningUp/Cyberchef.png)
+![Cyberchef]({{ site.url }}{{ site.baseurl }}/assets/SigningUp/Cyberchef.png)
 
 We get the following output:
 

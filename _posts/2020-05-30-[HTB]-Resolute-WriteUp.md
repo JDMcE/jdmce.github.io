@@ -10,7 +10,7 @@ tags:
   - WriteUp
 ---
 
-![Resolute](/assets/resolute/resolute.jpg)
+![Resolute]({{ site.url }}{{ site.baseurl }}/assets/resolute/resolute.jpg)
 
 * OS: Windows
 * Difficulty: Medium
