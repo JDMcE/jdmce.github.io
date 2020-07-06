@@ -3,6 +3,7 @@ title: "[HTB] Servmon WriteUp"
 date: 2020-06-15T15:34:30-04:00
 categories:
   - writeup
+excerpt: "Lets start by running nmap. FTP is running and allows anonymous login."
 tags:
   - HTB
   - Hack The Box
