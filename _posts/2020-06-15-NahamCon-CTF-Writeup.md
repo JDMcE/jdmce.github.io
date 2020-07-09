@@ -50,7 +50,7 @@ var _0xbcec=["\x75\x73\x65\x20\x73\x74\x72\x69\x63\x74","\x6A\x73\x63\x72\x6F\x6
 ...
 ```
 
-I used [beautifier.io](https://beautifier.io/) to deobfuscate the code.
+I used [beautifier.io](https://beautifier.io/) to de-obfuscate the code.
 
 ```js
 (function(_0xe943x1) {
@@ -118,7 +118,7 @@ I first tried going directly to phphonebook.php and got the following page:
 
 ![phphonebook]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/phonebook.jpg)
 
-I then tried going to /index.php/?file=phphonebook.php and got the same page. I realised quickly that it was a local file inclusion, but spent too long trying to look for other files, like a flag.php, which doesnt exist. 
+I then tried going to /index.php/?file=phphonebook.php and got the same page. I realised quickly that it was a local file inclusion, but spent too long trying to look for other files, like a flag.php, which doesn't exist. 
 
 Eventually I realised / remembered that I might be able to get the contents of phphonebook.php by using base64 encoding. 
 
@@ -177,7 +177,7 @@ Decoding it gives us the following code:
 </html>
 ```
 
-From the code we learn that flag.txt will be read if the emergency variable is set, however it doesnt matter what this is set too. 
+From the code we learn that flag.txt will be read if the emergency variable is set, however it doesn't matter what this is set too. 
 
 We can use BurpSuite to add the line `emergency=123` to the body of the POST request to phphonebook.php which will return the flag.
 
@@ -192,7 +192,7 @@ We can use BurpSuite to add the line `emergency=123` to the body of the POST req
 * Points: 75
 * Solves: 255
 
-We are given a nc session to join `nc jh2i.com 50011` and a binary to download called dangerous.
+We are given an nc session to join `nc jh2i.com 50011` and a binary to download called dangerous.
 When we run dangerous it asks for a name and then prints the name along with an ascii sword
 
 ![Its dangerous to go alone]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/dangerous.jpg)
@@ -228,7 +228,7 @@ print buff + vulnfunc
 * Points: 75
 * Solves: 582
 
-When we connect the output looks like random characted (like cat /dev/urandom).
+When we connect the output looks like random characters (like cat /dev/urandom).
 
 We can redirect the output to a file then grep for the flag.
 
@@ -254,7 +254,7 @@ We connect to `nc jh2i.com 50026` We run ls -la to see all files, there seems to
 
 If we highlight and copy the line then look at it as hex we see the filename contains characters outside the ascii table, the filename in hex is `2e 2e e2 80 80`.
 
-If we simply cope and paste the filename we can 
+If we simply copy and paste the filename we can use cat:
 
 ```bash
 user@host:/home/user$ cat .. 
@@ -312,7 +312,7 @@ JCTF{an_annoyed_grunt}
 * Points: 50
 * Solves: 702
 
-The challenge name suggests Instagram, so I looked the username and the flag is in the account bio.
+The challenge name suggests Instagram, so I looked up the username and the flag is in the account's bio.
 
 ![Insta]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/insta.jpg)
 
@@ -373,7 +373,7 @@ Note: Using grep will only find the first half of the flag
 
 ![HackerMeme]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/hackermeme.jpg)
 
-Running string on the image will give us the flag 
+Running strings on the image will give us the flag 
 
 ```bash
 strings hackermeme.jpg | grep flag
@@ -399,7 +399,7 @@ strings hackermeme.jpg | grep flag
 * Points: 30
 * Solves: 1310
 
-If we edit the cookie on the page to set user to admin, we get "you are logged in as nqzva." This is the rot 13 of admin to setting the cookie to nqzva and refreshing will give us the flag.
+If we edit the cookie on the page to set user to admin, we get "you are logged in as nqzva." This is the rot 13 of admin, so setting the cookie to nqzva and refreshing will give us the flag.
 
 ![admin]({{ site.url }}{{ site.baseurl }}/assets/Nahamconctf/admin.jpg)
 
