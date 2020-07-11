@@ -191,7 +191,7 @@ reader@book:~ ./logrotten -p ./payloadfile /home/reader/backups/access.log
 Waiting for rotating backups/access.log...
 ```
 
-If we now write rrandom data to the log, it should trigger our payload.
+If we now write random data to the log, it should trigger our payload.
 
 ```bash
 head -c 10M < /dev/urandom > access.log
