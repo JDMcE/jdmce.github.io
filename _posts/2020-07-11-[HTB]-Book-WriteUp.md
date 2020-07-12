@@ -6,8 +6,8 @@ categories:
 excerpt: "Book is a medium difficulty machine on Hack the Box. As always we begin by running an nmap scan."
 tags:
   - HTB
-  - hack the box
-  - book
+  - Hack The Box
+  - Book
   - WriteUp
 ---
 

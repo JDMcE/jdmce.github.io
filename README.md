@@ -2,7 +2,7 @@
 
 Personal website.
 
-[jdmce.github.io/JDMCE/](https://jdmce.github.io/JDMCE/)
+[jdmce.github.io](https://jdmce.github.io)
 
 
 Powered by Jekyll & [Minimal Mistakes.](https://mmistakes.github.io/minimal-mistakes/)
