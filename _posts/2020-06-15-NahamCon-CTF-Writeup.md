@@ -9,6 +9,7 @@ tags:
   - WriteUp
 toc: true
 toc_label: "Challenges"
+toc_sticky: true
 ---
 
 [Nahamcon CTF](https://ctf.nahamcon.com/) was an online CTF even held on June 12th-13th. Unfortunately I was only able to dedicate a few hours so I focused on the easier challenges.
