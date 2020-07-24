@@ -32,6 +32,13 @@ paginate: 5 # amount of posts to show
 paginate_path: /page:num/
 timezone: Europe/London # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
+# Analytics
+analytics:
+  provider               : "google-gtag" # false (default), "google", "google-universal", "custom"
+  google:
+    tracking_id          : "UA-173525818-1"
+    anonymize_ip         : false # true, false (default)
+
 include:
   - _pages
 
@@ -115,3 +122,5 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+
