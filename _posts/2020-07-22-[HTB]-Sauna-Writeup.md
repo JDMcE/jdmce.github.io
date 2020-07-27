@@ -3,7 +3,7 @@ title: "[HTB] Sauna WriteUp"
 date: 2020-07-22T12:00:00-00:00
 categories:
   - writeup
-excerpt: "Sauna is an easy Windows machine on Hack The box. A user is Kerberoastable with leads to a second user, then a DCSync attack leads to administrator."
+excerpt: "Sauna is an easy Windows machine on Hack The box. A user is Kerberoastable which leads to a second user, then a DCSync attack leads to administrator."
 tags:
   - HTB
   - Hack The Box
@@ -14,7 +14,7 @@ tags:
 
 ![Sauna]({{ site.url }}{{ site.baseurl }}/assets/sauna/sauna.jpg)
 
-Sauna is an easy Windows machine on Hack The box. A user is Kerberoastable with leads to a second user, then a DCSync attack leads to administrator.
+Sauna is an easy Windows machine on Hack The box. A user is Kerberoastable which leads to a second user, then a DCSync attack leads to administrator.
 
 Begin with an nmap scan.
 
@@ -63,7 +63,7 @@ Not much can be found on the website. The about page lists members of the team, 
 
 ![Meet the Team]({{ site.url }}{{ site.baseurl }}/assets/sauna/meettheteam.jpg)
 
-I also ran ldapsearch agains the machine, this reveals a user Hugo Smith, this turned out to be a rabbit hole, the real user we will need to go after is Fergus Smith.
+I also ran ldapsearch against the machine, this reveals a user Hugo Smith, this turned out to be a rabbit hole, the real user we will need to go after is Fergus Smith.
 
 `ldapsearch -h 10.10.10.175 -p 389 -x -b 'dc=EGOTISTICAL-BANK,dc=local' > ldapsearch.txt`
 
