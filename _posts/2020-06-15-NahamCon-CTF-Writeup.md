@@ -2,7 +2,7 @@
 title: "Nahamcon CTF WriteUp"
 date: 2020-06-15T15:34:30-04:00
 categories:
-  - writeup
+  - CTF Writeups
 tags:
   - CTF
   - Nahamcon

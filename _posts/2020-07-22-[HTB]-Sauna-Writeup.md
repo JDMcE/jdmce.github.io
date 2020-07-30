@@ -2,7 +2,7 @@
 title: "[HTB] Sauna WriteUp"
 date: 2020-07-22T12:00:00-00:00
 categories:
-  - writeup
+  - Hack The Box
 excerpt: "Sauna is an easy Windows machine on Hack The box. A user is Kerberoastable which leads to a second user, then a DCSync attack leads to administrator."
 tags:
   - HTB

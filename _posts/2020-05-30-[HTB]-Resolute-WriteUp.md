@@ -2,7 +2,7 @@
 title: "[HTB] Resolute WriteUp"
 date: 2020-05-30T15:34:30-04:00
 categories:
-  - writeup
+  - Hack The Box
 excerpt: "Lets start by running nmap. There is no website running on port 80, this machine is going to be entirely Active Directory."
 tags:
   - HTB
