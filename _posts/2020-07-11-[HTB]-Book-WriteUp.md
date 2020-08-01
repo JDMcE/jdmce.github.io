@@ -4,6 +4,8 @@ date: 2020-07-11T12:00:00-00:00
 categories:
   - Hack The Box
 excerpt: "Book is a medium difficulty machine on Hack the Box. As always we begin by running an nmap scan."
+header:
+  teaser: "/assets/book/book.jpg"
 tags:
   - HTB
   - Hack The Box

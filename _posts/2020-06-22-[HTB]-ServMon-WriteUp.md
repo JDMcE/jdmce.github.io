@@ -4,6 +4,8 @@ date: 2020-06-15T15:34:30-04:00
 categories:
   - Hack The Box
 excerpt: "Lets start by running nmap. FTP is running and allows anonymous login."
+header:
+  teaser: "/assets/servmon/servmon.jpg"
 tags:
   - HTB
   - Hack The Box
