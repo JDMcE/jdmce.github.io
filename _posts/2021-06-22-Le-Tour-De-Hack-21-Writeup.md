@@ -17,6 +17,8 @@ toc_sticky: true
 
 [Le Tour De Hack](https://ltdh21.enusec.org/) was an online CTF event organised by [ENUSEC](https://enusec.org/), the Edinburgh Napier Security Society.
 
+This write-up will cover the challenges I solved during the event.
+
 ## Web
 
 ### Redacted
