@@ -4,6 +4,8 @@ date: 2021-06-21T15:34:30-04:00
 categories:
   - CTF Writeups
 excerpt: "Le Tour De Hack 2021 was an online CTF event organised by ENUSEC"
+header:
+  teaser: "/assets/ltdh21/ltdh21.jpg"
 tags:
   - CTF
   - ltdh21
