@@ -343,7 +343,7 @@ George:
 
 Again we are given a nc session to connect to. We are given a long list of numbers and told to decode the message to get the flag. 
 
-I noticed that typing in a character at the prompt return 5 numbers, repeating the character changes the numbers, however the numbers always add up to the ascii value of the character
+I noticed that typing in a character at the prompt returns 5 numbers, repeating the character changes the numbers, however the numbers always add up to the ascii value of the character
 
 ```
 : a
@@ -388,7 +388,7 @@ Hello and welcome, I would like to inform you that doing this by hand would be a
 * Description: Can you find all the differences? Please circle each difference you find. If you can find all 10 differences you earn a gold star!
 * Solves: 15
 
-![Spot the Difference]({{ site.url }}{{ site.baseurl }}/assets/ltdh21/SpottheDiffimg1.png)
+![Spot the Difference]({{ site.url }}{{ site.baseurl }}/assets/ltdh21/SpotTheDiffimg1.png)
 
 We are given two images. The name of the challenge suggests we diff the two images.
 
