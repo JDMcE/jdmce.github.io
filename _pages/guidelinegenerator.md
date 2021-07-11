@@ -1,6 +1,10 @@
 ---
 permalink: /guideline/
 title: "Guideline Generator"
+tags:
+  - guideline
+  - guide
+  - Calligraphy
 ---
 
 
