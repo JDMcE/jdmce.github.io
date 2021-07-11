@@ -39,15 +39,6 @@ class Line{
 }
 
 
-function drawLine(a, b, x, y, w) {
-	ctx.beginPath();
-	ctx.moveTo(a, b);
-	ctx.lineTo(x, y);
-	ctx.lineWidth = w;
-	ctx.stroke();
-}
-
-
 function generate(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
