@@ -23,7 +23,10 @@ Page size: A4
       <select name="orientation"  id="orientation">
          <option value="portrait">Portrait</option>
          <option value="landscape">Landscape</option>
-      </select>
+      </select><p />
+      Draw Slant lines <input type="checkbox" id="drawSlant" name="drawSlant"><p />
+      Slant Angle <input type="number" name="slantAngle" id="slantAngle" value="45">
+      Slant Spacing <input type="number" id="slantSpacing" value="20">
    </fieldset>
    <input type="button"  class="btn--success" value="Generate" onclick="generate()"><br />
 </form>
