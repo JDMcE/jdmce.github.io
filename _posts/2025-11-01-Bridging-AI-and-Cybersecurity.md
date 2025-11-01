@@ -1,5 +1,5 @@
 ---
-title: ridging AI and Cybersecurity: A Kali Linux MCP Server
+title: Bridging AI and Cybersecurity - A Kali Linux MCP Server
 date: 2025-11-01T12:00:00-00:00
 categories:
   - AI
