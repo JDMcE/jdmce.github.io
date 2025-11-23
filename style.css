@@ -1,0 +1,210 @@
+:root {
+    --bg-color: #0a0a0a;
+    --sidebar-bg: #111111;
+    --text-color: #e0e0e0;
+    --accent-color: #00ff41; /* Hacker Green */
+    --dim-color: #666;
+    --code-bg: #1a1a1a;
+    --font-stack: 'Fira Code', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-stack);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    height: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid #333;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile h1 {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
+}
+
+.profile .role {
+    font-size: 0.8rem;
+    color: var(--dim-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 3rem;
+}
+
+nav {
+    flex-grow: 1;           
+    overflow-y: auto;       
+    padding-right: 5px;     
+    margin-top: 2rem;
+}
+
+/* Optional: Make the scrollbar look minimal/dark */
+nav::-webkit-scrollbar {
+    width: 6px;
+}
+nav::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 10px;
+}
+
+nav ul { list-style: none; }
+
+nav li { margin-bottom: 1rem; }
+
+nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: block;
+    padding: 0.5rem;
+    border-left: 2px solid transparent;
+}
+
+nav a:hover, nav a.active {
+    color: var(--accent-color);
+    border-left: 2px solid var(--accent-color);
+    background: rgba(0, 255, 65, 0.05);
+    padding-left: 1rem;
+}
+
+nav .date {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim-color);
+    margin-top: 0.2rem;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: 3rem 5rem;
+    overflow-y: auto;
+}
+
+/* Markdown Styling */
+.markdown-body {
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    color: var(--accent-color);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.markdown-body h1 { border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+
+.markdown-body p { margin-bottom: 1rem; }
+
+.markdown-body a { color: var(--accent-color); text-decoration: underline; }
+
+.markdown-body blockquote {
+    border-left: 3px solid var(--accent-color);
+    padding-left: 1rem;
+    color: var(--dim-color);
+    font-style: italic;
+}
+
+/* Inline code (like `print()`) */
+.markdown-body code {
+    background-color: var(--code-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'Fira Code', monospace;
+    color: #ff79c6; /* Keep pink ONLY for inline code */
+}
+
+/* Block code (The big blocks) */
+.markdown-body pre code {
+    color: inherit; /* Let Highlight.js handle the colors */
+    background: transparent; /* Let Highlight.js handle the background */
+    padding: 0;
+}
+
+.markdown-body pre {
+    position: relative; /* CRITICAL: Makes the button stay inside this box */
+    background-color: #282c34; /* Atom One Dark BG */
+    padding: 1rem;
+    padding-top: 2.5rem; /* Extra space at top so button doesn't overlap code */
+    border-radius: 5px;
+    border: 1px solid #333;
+    overflow-x: auto;
+}
+
+/* The Copy Button */
+.copy-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    
+    /* Minimal Look */
+    background: transparent;
+    border: 1px solid #444; /* Subtle border */
+    color: #888;
+    
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Hover Effect */
+.copy-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(0, 255, 65, 0.05);
+}
+
+
+.intro { text-align: center; margin-top: 20%; color: var(--dim-color); }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid #333; }
+    main { padding: 1rem; }
+}
+
+/* Profile Button Styling */
+.profile-btn {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    border: 1px solid var(--accent-color);
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.profile-btn:hover, .profile-btn.active {
+    background: var(--accent-color);
+    color: var(--bg-color); /* Invert colors on hover */
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--accent-color);
+}
