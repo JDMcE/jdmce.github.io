@@ -2,9 +2,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const postListElement = document.getElementById('post-list');
     const articleContainer = document.getElementById('article-container');
     const aboutLink = document.getElementById('about-link');
-    
+
     // Store posts globally so the router can access them later
     let globalPosts = [];
+
+    // ==========================================
+    // MOBILE MENU TOGGLE
+    // ==========================================
+    const hamburger = document.getElementById('hamburger-menu');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function toggleMenu() {
+        hamburger.classList.toggle('active');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    function closeMenu() {
+        hamburger.classList.remove('active');
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+
+    // Toggle menu when hamburger is clicked
+    if (hamburger) {
+        hamburger.addEventListener('click', toggleMenu);
+    }
+
+    // Close menu when overlay is clicked
+    if (overlay) {
+        overlay.addEventListener('click', closeMenu);
+    }
+
+    // Close menu when a navigation link is clicked
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('nav a') || e.target.id === 'about-link') {
+            closeMenu();
+        }
+    });
 
     // ==========================================
     // 1. INITIALIZATION & ROUTING
