@@ -182,11 +182,148 @@ main {
 
 .intro { text-align: center; margin-top: 20%; color: var(--dim-color); }
 
+/* Hamburger Menu (Hidden on Desktop) */
+.hamburger {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--accent-color);
+    padding: 0.5rem;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hamburger span {
+    width: 24px;
+    height: 2px;
+    background: var(--accent-color);
+    transition: all 0.3s;
+    display: block;
+}
+
+.hamburger:hover {
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+/* Hamburger Animation when active */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .container { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid #333; }
-    main { padding: 1rem; }
+    body {
+        overflow-y: auto;
+        height: auto;
+    }
+
+    .hamburger {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    main {
+        width: 100%;
+        padding: 1rem;
+        margin-top: 3rem;
+    }
+
+    .markdown-body {
+        max-width: 100%;
+    }
+
+    .profile h1 {
+        font-size: 1.3rem;
+    }
+
+    .profile .role {
+        font-size: 0.7rem;
+        margin-bottom: 1.5rem;
+    }
+
+    nav {
+        margin-top: 1rem;
+    }
+
+    nav a {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+    }
+
+    .markdown-body h1 {
+        font-size: 1.5rem;
+    }
+
+    .markdown-body h2 {
+        font-size: 1.3rem;
+    }
+
+    .markdown-body h3 {
+        font-size: 1.1rem;
+    }
+
+    .markdown-body pre {
+        padding: 0.75rem;
+        padding-top: 2rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Overlay for mobile sidebar */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Profile Button Styling */
