@@ -1,51 +1,891 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>./pentest_notes</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-</head>
-<body>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JDMCE - [Penetration Testing]</title>
+<meta name="description" content="John — penetration tester, Glasgow. Windows 95 desktop themed homepage.">
 
-    <button class="hamburger" id="hamburger-menu" aria-label="Toggle Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+<style>
+  /* ======================================================================
+     JDMCE.com — Windows 95 desktop edition (interactive)
+     Draggable windows, Start menu, live taskbar. Self-contained/offline.
+     ====================================================================== */
+  :root{
+    --face:#c0c0c0; --hi:#ffffff; --sh:#808080; --dksh:#000000;
+    --title:#000080; --title2:#1084d0; --desk:#008080; --sel:#000080;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;}
+  body{
+    background:var(--desk);
+    font-family:"MS Sans Serif","Pixelated MS Sans Serif",Tahoma,Geneva,Verdana,sans-serif;
+    font-size:13px; color:#000; height:100vh; user-select:none;
+    -webkit-user-select:none;
+  }
 
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  /* --- 3D bevel helpers --- */
+  .out{ border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi);
+        box-shadow:inset 1px 1px 0 var(--face), inset -1px -1px 0 var(--sh); }
+  .in { border:2px solid; border-color:var(--dksh) var(--hi) var(--hi) var(--dksh);
+        box-shadow:inset 1px 1px 0 var(--sh); }
 
-    <div class="container">
-        <aside class="sidebar" id="sidebar">
-            <div class="profile">
-                <h1 class="glitch" data-text="JDMCE">JDMcE</h1>
-                <p class="role">// Pentester</p>
-                <a href="#about" id="about-link" class="profile-btn">[ :: WHOAMI :: ]</a>
-            </div>
-            <nav>
-                <ul id="post-list">
-                    </ul>
-            </nav>
-            <footer>
-                <p>&copy; 2025 JDMCE</p>
-            </footer>
-        </aside>
+  /* --- desktop --- */
+  #desktop{ position:fixed; left:0; right:0; top:0; bottom:34px; overflow:hidden; }
 
-        <main id="main-content">
-            <div id="article-container" class="markdown-body">
-                <div class="intro">
-                    <h2>> System Ready...</h2>
-                    <p>&gt;&gt;&gt;</p>
-                </div>
-            </div>
-        </main>
+  .desktop-icons{ position:absolute; top:10px; left:10px; display:flex;
+    flex-direction:column; gap:18px; width:82px; z-index:1; }
+  .dicon{ text-align:center; color:#fff; cursor:pointer;
+    text-shadow:1px 1px 1px #000; font-size:12px; padding:3px; }
+  .dicon .glyph{ font-size:30px; line-height:1; display:block; margin-bottom:3px; }
+  .dicon span{ display:inline-block; padding:0 2px; }
+  .dicon.sel span{ background:var(--sel); outline:1px dotted #fff; }
+
+  /* --- windows --- */
+  .win{ position:absolute; background:var(--face); padding:3px;
+    display:flex; flex-direction:column; min-width:220px; }
+  .win.hidden, .win.closed{ display:none; }
+
+  .titlebar{
+    background:linear-gradient(90deg,var(--title),var(--title2));
+    color:#fff; font-weight:bold; padding:3px 3px 3px 6px;
+    display:flex; align-items:center; justify-content:space-between;
+    letter-spacing:.2px; flex:none; cursor:default; touch-action:none;
+  }
+  .win.inactive .titlebar{ background:linear-gradient(90deg,#7d7d7d,#b0b0b0); }
+  .titlebar .t{ display:flex; align-items:center; gap:6px; overflow:hidden;
+    white-space:nowrap; text-overflow:ellipsis; pointer-events:none; }
+  .titlebar .t .ico{ font-size:14px; }
+  .tbtns{ display:flex; gap:2px; }
+  .tbtn{ width:18px; height:16px; background:var(--face);
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi);
+    color:#000; font-size:9px; font-weight:bold; line-height:9px;
+    text-align:center; padding:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; }
+  .tbtn:active{ border-color:var(--dksh) var(--hi) var(--hi) var(--dksh); }
+  .tbtn.close{ margin-left:2px; }
+
+  .menubar{ display:flex; gap:2px; padding:2px 4px; font-size:13px; flex:none; }
+  .menubar span{ padding:1px 7px; cursor:default; }
+  .menubar span u{ text-decoration:underline; }
+  .menubar span:hover{ background:var(--sel); color:#fff; }
+
+  .body{ flex:1; display:flex; flex-direction:column; min-height:0; margin:2px; }
+  .client{ padding:14px 16px; background:var(--face); overflow:auto; flex:1; min-height:0; }
+
+  /* win95 scrollbars (webkit) */
+  .client::-webkit-scrollbar{ width:16px; height:16px; }
+  .client::-webkit-scrollbar-track{ background:#dfdfdf;
+    box-shadow:inset 1px 1px 0 #808080; }
+  .client::-webkit-scrollbar-thumb{ background:var(--face);
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi); }
+  .client::-webkit-scrollbar-corner{ background:var(--face); }
+
+  h1,h2,h3{ margin:0; }
+
+  .hero{ display:flex; gap:14px; align-items:center; margin-bottom:12px; }
+  .hero .bigico{ font-size:52px; line-height:1; }
+  .hero h1{ font-size:20px; color:var(--title); }
+  .hero .role{ font-size:13px; color:#000; }
+  .hero .loc{ font-size:12px; color:#404040; }
+
+  fieldset{ border:2px groove var(--hi); margin:12px 0; padding:8px 12px 12px; }
+  legend{ font-weight:bold; padding:0 4px; }
+
+  p{ margin:6px 0; line-height:1.45; }
+
+  .lv{ background:#fff; padding:2px; }
+  .lv .row{ display:flex; padding:3px 6px; }
+  .lv .row:nth-child(even){ background:#ececec; }
+  .lv .row .k{ width:130px; font-weight:bold; color:var(--title); flex:none; }
+  .lv .row .v{ flex:1; }
+  .lv .row .ic{ width:20px; flex:none; }
+
+  ul.checks{ list-style:none; margin:4px 0; padding:0; }
+  ul.checks li{ padding:3px 0; }
+
+  .btnrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+  a.btn,button.btn{ display:inline-block; background:var(--face); color:#000;
+    text-decoration:none; padding:5px 14px; font-size:13px; cursor:pointer;
+    font-family:inherit;
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi); }
+  a.btn:active,button.btn:active{ border-color:var(--dksh) var(--hi) var(--hi) var(--dksh); }
+  a.link{ color:var(--title); }
+
+  .statusbar{ display:flex; gap:3px; padding:3px 2px 0; font-size:12px; flex:none; }
+  .statusbar .cell{ padding:2px 8px; }
+  .statusbar .cell.grow{ flex:1; }
+
+  /* notepad */
+  .notepad .client{ background:#fff; font-family:"Courier New",monospace;
+    font-size:13px; white-space:pre-wrap; line-height:1.5; }
+
+  /* --- taskbar --- */
+  .taskbar{ position:fixed; left:0; right:0; bottom:0; height:34px;
+    background:var(--face); padding:3px; display:flex; align-items:center;
+    gap:6px; z-index:9000; border-top:2px solid var(--hi); }
+  .start{ display:flex; align-items:center; gap:5px; font-weight:bold;
+    padding:2px 9px 2px 5px; background:var(--face); cursor:pointer; flex:none;
+    font-family:inherit; font-size:13px;
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi); }
+  .start.open{ border-color:var(--dksh) var(--hi) var(--hi) var(--dksh);
+    box-shadow:inset 1px 1px 0 var(--sh); }
+  .start .flag{ font-size:15px; }
+  #tasks{ display:flex; gap:4px; flex:1; overflow:hidden; }
+  .taskitem{ flex:0 1 170px; min-width:0; padding:3px 8px; font-size:12px;
+    background:var(--face); overflow:hidden; white-space:nowrap; cursor:pointer;
+    text-overflow:ellipsis; text-align:left; font-family:inherit;
+    display:flex; align-items:center; gap:5px;
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi); }
+  .taskitem.active{ border-color:var(--dksh) var(--hi) var(--hi) var(--dksh);
+    box-shadow:inset 1px 1px 0 var(--sh); font-weight:bold; }
+  .tray{ margin-left:auto; padding:3px 8px; font-size:12px; flex:none;
+    border:2px solid; border-color:var(--sh) var(--hi) var(--hi) var(--sh);
+    display:flex; align-items:center; gap:6px; }
+
+  /* --- start menu --- */
+  #startmenu{ position:fixed; left:3px; bottom:36px; width:230px; z-index:9500;
+    background:var(--face); padding:3px; display:none; }
+  #startmenu.open{ display:flex; }
+  #startmenu .rail{ width:26px; flex:none; margin-right:3px;
+    background:linear-gradient(180deg,#000080,#1084d0);
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    color:#fff; font-weight:bold; font-size:18px; text-align:right;
+    padding:8px 3px; letter-spacing:1px; }
+  #startmenu .rail b{ color:#c0c0c0; }
+  #startmenu .items{ flex:1; }
+  .smitem{ display:flex; align-items:center; gap:10px; padding:6px 8px;
+    font-size:13px; cursor:pointer; }
+  .smitem .g{ font-size:18px; width:22px; text-align:center; }
+  .smitem:hover{ background:var(--sel); color:#fff; }
+  .smsep{ height:2px; margin:3px 2px; border-top:1px solid var(--sh);
+    border-bottom:1px solid var(--hi); }
+
+  /* clippy */
+  .clippy{ position:fixed; right:16px; bottom:70px; z-index:8000;
+    background:#ffffcc; border:1px solid #000; padding:8px 10px;
+    max-width:210px; font-size:12px; box-shadow:2px 2px 3px rgba(0,0,0,.4); }
+  .clippy b{ display:block; margin-bottom:2px; }
+  .clippy .x{ float:right; cursor:pointer; font-weight:bold; margin-left:6px; }
+
+  /* shutdown screen */
+  #shutdown{ position:fixed; inset:0; z-index:99999; background:#000;
+    display:none; align-items:center; justify-content:center; cursor:pointer; }
+  #shutdown.on{ display:flex; }
+  #shutdown div{ color:#ff8c00; font-size:26px; font-weight:bold;
+    text-align:center; font-family:"Courier New",monospace; line-height:1.6;
+    text-shadow:0 0 2px #ff8c00; }
+
+  /* --- menu bar dropdowns --- */
+  .menubar{ position:relative; }
+  .mi{ position:relative; padding:1px 7px; cursor:default; }
+  .mi u{ text-decoration:underline; }
+  .mi.open,.mi:hover{ background:var(--sel); color:#fff; }
+  .dropdown{ display:none; position:absolute; left:0; top:100%; z-index:9600;
+    min-width:150px; background:var(--face); padding:2px;
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi);
+    box-shadow:2px 2px 3px rgba(0,0,0,.4); color:#000; }
+  .mi.open .dropdown{ display:block; }
+  .ditem{ padding:3px 20px 3px 22px; white-space:nowrap; cursor:default;
+    position:relative; }
+  .ditem:hover{ background:var(--sel); color:#fff; }
+  .ditem u{ text-decoration:underline; }
+  .ditem .acc{ color:var(--sh); margin-left:18px; }
+  .ditem:hover .acc{ color:#fff; }
+  .dsep{ height:2px; margin:3px 2px; border-top:1px solid var(--sh);
+    border-bottom:1px solid var(--hi); }
+
+  /* --- resize handle (bottom-right grip) --- */
+  .resize-handle{ position:absolute; right:0; bottom:0; width:16px; height:16px;
+    cursor:nwse-resize; z-index:6; touch-action:none;
+    background:
+      linear-gradient(135deg,
+        transparent 0 42%, var(--sh) 42% 50%, transparent 50% 58%,
+        var(--sh) 58% 66%, transparent 66% 74%, var(--sh) 74% 82%,
+        transparent 82%); }
+  .win.maxed .resize-handle{ display:none; }
+
+  /* --- iframe app windows (Netscape / Terminal) --- */
+  .app .client{ padding:0; overflow:hidden; }
+  .win iframe{ width:100%; height:100%; border:0; display:block; background:#fff; }
+  .termwin iframe, .gamewin iframe{ background:#07080d; }
+
+  /* Netscape toolbar */
+  .navbar{ display:flex; align-items:center; gap:4px; padding:3px 4px; flex:none;
+    background:var(--face); }
+  .navbtn{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:44px; padding:2px 5px; font-size:10px; line-height:1.05; cursor:pointer;
+    background:var(--face); font-family:inherit; color:#000;
+    border:2px solid; border-color:var(--hi) var(--dksh) var(--dksh) var(--hi); }
+  .navbtn:active{ border-color:var(--dksh) var(--hi) var(--hi) var(--dksh); }
+  .navbtn .ni{ font-size:14px; line-height:1; }
+  .navbar .loc{ display:flex; align-items:center; gap:5px; flex:1; min-width:0;
+    padding-left:6px; }
+  .navbar .loc label{ flex:none; font-size:12px; }
+  .navbar .loc .addr{ flex:1; min-width:0; background:#fff; padding:3px 6px;
+    font-family:inherit; font-size:12px; white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; }
+  .throbber{ flex:none; width:24px; height:24px; font-size:18px; text-align:center;
+    line-height:24px; background:#000080; color:#fff; }
+
+  /* --- generic modal dialog (About box) --- */
+  #modal-layer{ position:fixed; inset:0; z-index:9800; display:none;
+    align-items:center; justify-content:center; }
+  #modal-layer.on{ display:flex; }
+  .dialog{ background:var(--face); padding:3px; width:340px; max-width:92%; }
+  .dialog .titlebar{ cursor:default; }
+  .dialog .dlgbody{ padding:16px; display:flex; gap:14px; align-items:flex-start; }
+  .dialog .dlgico{ font-size:44px; line-height:1; flex:none; }
+  .dialog .dlgtext h3{ font-size:14px; margin-bottom:6px; color:var(--title); }
+  .dialog .dlgtext p{ margin:4px 0; font-size:12px; line-height:1.4; }
+  .dialog .sep{ margin:0 12px; border-top:1px solid var(--sh);
+    border-bottom:1px solid var(--hi); height:2px; }
+  .dialog .dlgbtns{ display:flex; justify-content:center; padding:6px 0 12px; }
+
+  /* --- boot / startup splash --- */
+  #boot{ position:fixed; inset:0; z-index:100000; background:#000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:opacity .5s ease; }
+  #boot.off{ opacity:0; pointer-events:none; }
+  #boot .logo{ display:flex; align-items:center; gap:20px; margin-bottom:40px; }
+  #boot .flag{ display:grid; grid-template-columns:44px 44px; grid-template-rows:44px 44px;
+    gap:4px; transform:perspective(200px) rotateY(-14deg); filter:drop-shadow(3px 3px 4px #000); }
+  #boot .flag i{ display:block; border-radius:3px 0 0 0; }
+  #boot .flag i:nth-child(1){ background:#ff3b30; }
+  #boot .flag i:nth-child(2){ background:#4cd964; }
+  #boot .flag i:nth-child(3){ background:#5ac8fa; }
+  #boot .flag i:nth-child(4){ background:#ffcc00; }
+  #boot .wt{ color:#fff; text-align:left; font-family:Tahoma,"MS Sans Serif",sans-serif; }
+  #boot .wt .s{ font-size:20px; opacity:.85; }
+  #boot .wt .b{ font-size:46px; font-weight:bold; letter-spacing:1px; line-height:1; }
+  #boot .starting{ color:#fff; font-size:15px; margin-bottom:14px; }
+  #boot .progress{ width:260px; height:20px; background:#101010; padding:2px;
+    border:2px solid; border-color:#404040 #fff #fff #404040; }
+  #boot .progress i{ display:block; height:100%; width:0;
+    background:repeating-linear-gradient(90deg,#000080 0 12px,#1084d0 12px 16px);
+    animation:bootload 2.4s ease-in-out forwards; }
+  @keyframes bootload{ 0%{width:0} 100%{width:100%} }
+  #boot .copyr{ position:absolute; bottom:26px; color:#888; font-size:12px;
+    font-family:Tahoma,sans-serif; }
+</style>
+
+<!-- BOOT / STARTUP SPLASH -->
+<div id="boot">
+  <div class="logo">
+    <div class="flag"><i></i><i></i><i></i><i></i></div>
+    <div class="wt"><div class="s">Microsoft&reg;</div><div class="b">Windows&nbsp;95</div></div>
+  </div>
+  <div class="starting">Starting Windows&nbsp;95&hellip;</div>
+  <div class="progress"><i></i></div>
+  <div class="copyr">Copyright &copy; JDMCE.COM &middot; Authorized testing only</div>
+</div>
+
+<div id="desktop">
+
+  <!-- desktop shortcuts -->
+  <div class="desktop-icons">
+    <div class="dicon" data-open="win-main"><span class="glyph">🖥️</span><span>My<br>Computer</span></div>
+    <div class="dicon" data-open="win-readme"><span class="glyph">📁</span><span>Recon<br>Tools</span></div>
+    <div class="dicon" data-open="win-netscape"><span class="glyph">🌐</span><span>Netscape</span></div>
+    <div class="dicon" data-open="win-terminal"><span class="glyph">📟</span><span>Terminal</span></div>
+    <div class="dicon" data-open="win-tetris"><span class="glyph">🧱</span><span>Tetris</span></div>
+    <div class="dicon" data-recycle><span class="glyph">🗑️</span><span>Recycle<br>Bin</span></div>
+    <div class="dicon" data-open="win-contact"><span class="glyph">✉️</span><span>Inbox</span></div>
+  </div>
+
+  <!-- MAIN WINDOW -->
+  <div class="win out" id="win-main" data-icon="🛡️" data-name="JDMCE.exe"
+       style="left:96px; top:10px; width:min(740px, calc(100% - 112px)); height:min(740px, calc(100% - 50px));">
+    <div class="titlebar">
+      <div class="t"><span class="ico">🛡️</span> JDMCE.exe — [ Penetration Testing ]</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
     </div>
+    <div class="menubar">
+      <div class="mi"><u>F</u>ile
+        <div class="dropdown">
+          <div class="ditem" data-open="win-netscape">Open in <u>N</u>etscape&hellip;</div>
+          <div class="ditem" data-print>&nbsp;<u>P</u>rint&hellip;</div>
+          <div class="dsep"></div>
+          <div class="ditem" data-act="close"><u>E</u>xit</div>
+        </div>
+      </div>
+      <div class="mi"><u>E</u>dit
+        <div class="dropdown">
+          <div class="ditem" data-noop>Cu<u>t</u><span class="acc">Ctrl+X</span></div>
+          <div class="ditem" data-noop><u>C</u>opy<span class="acc">Ctrl+C</span></div>
+          <div class="ditem" data-noop><u>P</u>aste<span class="acc">Ctrl+V</span></div>
+        </div>
+      </div>
+      <div class="mi"><u>V</u>iew
+        <div class="dropdown">
+          <div class="ditem" data-noop><u>T</u>oolbar</div>
+          <div class="ditem" data-noop><u>S</u>tatus Bar</div>
+        </div>
+      </div>
+      <div class="mi"><u>E</u>ngage
+        <div class="dropdown">
+          <div class="ditem" data-open="win-contact"><u>S</u>cope an Engagement&hellip;</div>
+          <div class="ditem" data-linkedin><u>R</u>equest Quote&hellip;</div>
+        </div>
+      </div>
+      <div class="mi"><u>H</u>elp
+        <div class="dropdown">
+          <div class="ditem" data-open="win-readme"><u>H</u>elp Topics</div>
+          <div class="dsep"></div>
+          <div class="ditem" data-about><u>A</u>bout JDMCE.exe&hellip;</div>
+        </div>
+      </div>
+    </div>
+    <div class="body in">
+      <div class="client">
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+        <div class="hero">
+          <div class="bigico">🛡️</div>
+          <div>
+            <h1>John // JDMCE</h1>
+            <div class="role">Penetration Tester</div>
+            <div class="loc">📍 Glasgow, Scotland &nbsp;·&nbsp; PraCSP · CREST CRT · CHECK · SC Cleared</div>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>About</legend>
+          <p>I'm John, a penetration tester based in <b>Glasgow</b>. Most of my
+          work is infrastructure, web applications and Active Directory, with
+          some cloud and mobile. Outside of work I'm usually doing CTFs or
+          building my own tooling, lately around AI and offensive security.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Skills &amp; Arsenal</legend>
+          <div class="lv in">
+            <div class="row"><span class="ic">🌐</span><span class="k">Network</span><span class="v">nmap · responder · ntlmrelayx · netexec · impacket</span></div>
+            <div class="row"><span class="ic">🕸️</span><span class="k">Web</span><span class="v">burp suite · owasp asvs · sqlmap · ffuf · nuclei</span></div>
+            <div class="row"><span class="ic">🗝️</span><span class="k">Active Directory</span><span class="v">bloodhound · certipy · kerberoasting · ad cs (esc1/4/8)</span></div>
+            <div class="row"><span class="ic">☁️</span><span class="k">Cloud</span><span class="v">azure · entra id · scoutsuite · conditional-access review</span></div>
+            <div class="row"><span class="ic">📱</span><span class="k">Mobile</span><span class="v">frida · objection · apk re · ssl-pinning bypass (android)</span></div>
+            <div class="row"><span class="ic">💻</span><span class="k">Languages</span><span class="v">python · go · bash</span></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Certifications</legend>
+          <ul class="checks">
+            <li>☑ <b>PraCSP</b> — practitioner cyber security professional (uk cyber security council)</li>
+            <li>☑ <b>CREST CRT</b> — registered penetration tester</li>
+            <li>☑ <b>CHECK Team Member</b> — ncsc check scheme</li>
+            <li>☑ <b>SC Cleared</b> — uk security clearance</li>
+          </ul>
+        </fieldset>
+
+        <fieldset>
+          <legend>Experience</legend>
+          <div class="lv in">
+            <div class="row"><span class="k">Sectors</span><span class="v">financial services · healthcare · manufacturing · retail</span></div>
+            <div class="row"><span class="k">Assessments</span><span class="v">internal &amp; external infra · web &amp; mobile · cloud · ad</span></div>
+            <div class="row"><span class="k">Reviews</span><span class="v">build &amp; config · firewall rulebase · cloud posture</span></div>
+            <div class="row"><span class="k">Reporting</span><span class="v">clear findings, with steps to reproduce and fix</span></div>
+          </div>
+        </fieldset>
+
+        <div class="btnrow">
+          <button class="btn" data-open="win-contact">✉️ Contact Me</button>
+        </div>
+
+      </div>
+      <div class="statusbar">
+        <div class="cell in">Ready</div>
+        <div class="cell in grow">4 object(s)</div>
+        <div class="cell in">🛡️ Secure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT WINDOW -->
+  <div class="win out closed" id="win-contact" data-icon="✉️" data-name="Contact"
+       style="left:560px; top:120px; width:430px;">
+    <div class="titlebar">
+      <div class="t"><span class="ico">✉️</span> Contact — Address Book</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="body in">
+      <div class="client">
+        <div class="lv in" style="margin-bottom:10px;">
+          <div class="row"><span class="k">Location</span><span class="v">Glasgow, Scotland</span></div>
+          <div class="row"><span class="k">GitHub</span><span class="v"><a class="link" href="https://github.com/JDMcE" target="_blank" rel="noopener">github.com/JDMcE</a></span></div>
+          <div class="row"><span class="k">LinkedIn</span><span class="v"><a class="link" href="https://www.linkedin.com/in/john-mcewan/" target="_blank" rel="noopener">linkedin.com/in/john-mcewan</a></span></div>
+        </div>
+        <div class="btnrow">
+          <a class="btn" href="https://www.linkedin.com/in/john-mcewan/" target="_blank" rel="noopener">💼 Message on LinkedIn</a>
+          <button class="btn" data-act="close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- README (notepad) -->
+  <div class="win out notepad closed" id="win-readme" data-icon="📄" data-name="readme.txt"
+       style="left:70px; top:360px; width:380px; height:220px;">
+    <div class="titlebar">
+      <div class="t"><span class="ico">📄</span> readme.txt — Notepad</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="body in">
+      <div class="client">JDMCE.COM  —  read me first
+===========================
+
+Tip: drag windows by their title bar.
+Use  _  □  ✕  to minimize / maximize / close.
+Click "Start" for the menu.
+
+Questions? Find me on LinkedIn.
+Authorized testing only.
+
+-- john</div>
+    </div>
+  </div>
+
+  <!-- NETSCAPE BROWSER -->
+  <div class="win out app browser closed" id="win-netscape" data-icon="🌐" data-name="Netscape - [JDMCE.com]"
+       style="left:150px; top:34px; width:660px; height:490px;">
+    <div class="titlebar">
+      <div class="t"><span class="ico">🌐</span> Netscape - [JDMCE.com :: John's Cyber-Security Homepage!!!]</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="menubar">
+      <div class="mi"><u>F</u>ile
+        <div class="dropdown">
+          <div class="ditem" data-reload><u>R</u>eload</div>
+          <div class="dsep"></div>
+          <div class="ditem" data-act="close"><u>C</u>lose</div>
+        </div>
+      </div>
+      <div class="mi"><u>E</u>dit
+        <div class="dropdown"><div class="ditem" data-noop>Find in Page&hellip;</div></div>
+      </div>
+      <div class="mi"><u>V</u>iew
+        <div class="dropdown"><div class="ditem" data-reload><u>R</u>eload</div></div>
+      </div>
+      <div class="mi"><u>G</u>o
+        <div class="dropdown"><div class="ditem" data-reload>Home Page</div></div>
+      </div>
+      <div class="mi"><u>H</u>elp
+        <div class="dropdown"><div class="ditem" data-about><u>A</u>bout Netscape&hellip;</div></div>
+      </div>
+    </div>
+    <div class="navbar in">
+      <button class="navbtn" data-reload><span class="ni">⬅</span>Back</button>
+      <button class="navbtn" data-noop><span class="ni">➡</span>Forward</button>
+      <button class="navbtn" data-reload><span class="ni">🔄</span>Reload</button>
+      <button class="navbtn" data-reload><span class="ni">🏠</span>Home</button>
+      <div class="loc"><label>Location:</label>
+        <div class="addr in">http://www.jdmce.com/index.html</div></div>
+      <div class="throbber">N</div>
+    </div>
+    <div class="body in">
+      <div class="client">
+        <iframe id="nsframe" src="web1.html" title="JDMCE.com homepage"></iframe>
+      </div>
+      <div class="statusbar">
+        <div class="cell in grow">Document: Done</div>
+        <div class="cell in">🔒</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERMINAL (BBS) -->
+  <div class="win out app termwin closed" id="win-terminal" data-icon="📟" data-name="Terminal - JDMCE BBS"
+       style="left:210px; top:78px; width:640px; height:452px;">
+    <div class="titlebar">
+      <div class="t"><span class="ico">📟</span> Terminal - JDMCE // Node 1 - CONNECT 14400</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="menubar">
+      <div class="mi"><u>F</u>ile
+        <div class="dropdown">
+          <div class="ditem" data-reload>Re<u>d</u>ial</div>
+          <div class="dsep"></div>
+          <div class="ditem" data-act="close">E<u>x</u>it</div>
+        </div>
+      </div>
+      <div class="mi"><u>H</u>elp
+        <div class="dropdown"><div class="ditem" data-about><u>A</u>bout Terminal&hellip;</div></div>
+      </div>
+    </div>
+    <div class="body in">
+      <div class="client">
+        <iframe id="bbsframe" src="bbs.html" title="JDMCE BBS"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- TETRIS (tgm) -->
+  <div class="win out app gamewin closed" id="win-tetris" data-icon="🧱" data-name="Tetris"
+       style="left:90px; top:10px; width:min(920px, calc(100% - 100px)); height:min(840px, calc(100% - 50px));">
+    <div class="titlebar">
+      <div class="t"><span class="ico">🧱</span> Tetris — TGM</div>
+      <div class="tbtns">
+        <button class="tbtn" data-act="min" title="Minimize">_</button>
+        <button class="tbtn" data-act="max" title="Maximize">□</button>
+        <button class="tbtn close" data-act="close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="menubar">
+      <div class="mi"><u>G</u>ame
+        <div class="dropdown">
+          <div class="ditem" data-reload><u>N</u>ew Game</div>
+          <div class="dsep"></div>
+          <div class="ditem" data-act="close">E<u>x</u>it</div>
+        </div>
+      </div>
+    </div>
+    <div class="body in">
+      <div class="client">
+        <iframe data-src="tgm/index.html" title="Tetris"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- assistant -->
+<div class="clippy" id="clippy">
+  <span class="x" onclick="document.getElementById('clippy').style.display='none'">✕</span>
+  <b>📎 It looks like you're hiring a pentester!</b>
+  Would you like help scoping an engagement?
+</div>
+
+<!-- START MENU -->
+<div id="startmenu">
+  <div class="rail">JDMCE<b>95</b></div>
+  <div class="items">
+    <div class="smitem" data-open="win-main"><span class="g">🛡️</span> JDMCE.exe</div>
+    <div class="smitem" data-open="win-netscape"><span class="g">🌐</span> Netscape Navigator</div>
+    <div class="smitem" data-open="win-terminal"><span class="g">📟</span> Terminal (BBS)</div>
+    <div class="smitem" data-open="win-tetris"><span class="g">🧱</span> Tetris</div>
+    <div class="smitem" data-open="win-contact"><span class="g">✉️</span> Contact</div>
+    <div class="smitem" data-open="win-readme"><span class="g">📄</span> readme.txt</div>
+    <div class="smsep"></div>
+    <div class="smitem" data-linkedin><span class="g">💼</span> LinkedIn…</div>
+    <div class="smitem" data-github><span class="g">🐙</span> GitHub…</div>
+    <div class="smitem" data-about><span class="g">ℹ️</span> About JDMCE…</div>
+    <div class="smitem" data-shutdown><span class="g">⏻</span> Shut Down…</div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar out">
+  <button class="start" id="startbtn"><span class="flag">🪟</span> Start</button>
+  <div id="tasks"></div>
+  <div class="tray"><span id="clock">🔊 12:00 PM</span></div>
+</div>
+
+<!-- ABOUT / MODAL DIALOG -->
+<div id="modal-layer">
+  <div class="dialog out" id="about-dialog">
+    <div class="titlebar">
+      <div class="t"><span class="ico">ℹ️</span> <span id="about-title">About JDMCE.exe</span></div>
+      <div class="tbtns"><button class="tbtn close" data-modal-close title="Close">✕</button></div>
+    </div>
+    <div class="dlgbody">
+      <div class="dlgico" id="about-ico">🛡️</div>
+      <div class="dlgtext" id="about-text">
+        <h3>JDMCE.exe</h3>
+        <p>Penetration Testing Suite&nbsp; Version 95</p>
+        <p>John // JDMCE — Glasgow, Scotland</p>
+        <p>PraCSP · CREST CRT · CHECK Team Member · SC Cleared</p>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div class="dlgtext" style="padding:8px 16px 0;"><p style="font-size:11px;color:#404040;">This product is licensed for authorized testing only. Warning: unauthorized access is prohibited.</p></div>
+    <div class="dlgbtns"><button class="btn" data-modal-close style="min-width:80px;">OK</button></div>
+  </div>
+</div>
+
+<!-- SHUTDOWN -->
+<div id="shutdown"><div>It's now safe to turn off<br>your computer.<br><br><span style="font-size:14px;color:#c0c0c0">(click anywhere to return)</span></div></div>
+
+<script>
+(function(){
+  var desktop = document.getElementById('desktop');
+  var tasksEl = document.getElementById('tasks');
+  var startBtn = document.getElementById('startbtn');
+  var startMenu = document.getElementById('startmenu');
+  var wins = Array.prototype.slice.call(document.querySelectorAll('.win'));
+  var z = 20, activeId = null;
+  var TASKBAR = 34;
+
+  // ---- taskbar buttons -------------------------------------------------
+  function rebuildTasks(){
+    tasksEl.innerHTML = '';
+    wins.forEach(function(w){
+      if(w.classList.contains('closed')) return;
+      var b = document.createElement('button');
+      b.className = 'taskitem' + (w.id===activeId && !w.classList.contains('hidden') ? ' active':'');
+      b.innerHTML = '<span>'+w.dataset.icon+'</span> '+w.dataset.name;
+      b.onclick = function(){
+        if(w.classList.contains('hidden')){ show(w); focus(w); }
+        else if(w.id===activeId){ minimize(w); }
+        else { focus(w); }
+      };
+      tasksEl.appendChild(b);
+    });
+  }
+
+  function focus(w){
+    activeId = w.id;
+    w.style.zIndex = ++z;
+    wins.forEach(function(o){ o.classList.toggle('inactive', o!==w); });
+    rebuildTasks();
+  }
+  function show(w){ w.classList.remove('hidden','closed'); }
+  // lazy iframes (data-src) load on open and unload on close, so games stop
+  function lazyFrame(w){ return w && w.querySelector('iframe[data-src]'); }
+  function open(w){
+    var f = lazyFrame(w);
+    if(f && !f.getAttribute('src')) f.src = f.dataset.src;
+    show(w); focus(w);
+    if(f) setTimeout(function(){ f.focus(); }, 0);
+  }
+  function minimize(w){ w.classList.add('hidden'); activeId=null;
+    wins.forEach(function(o){o.classList.add('inactive');}); rebuildTasks(); }
+  function close(w){ w.classList.add('hidden','closed'); activeId=null;
+    var f = lazyFrame(w); if(f) f.removeAttribute('src');
+    rebuildTasks(); }
+  function toggleMax(w){
+    if(w.dataset.max==='1'){
+      w.dataset.max='0'; w.classList.remove('maxed');
+      w.style.left=w.dataset.px; w.style.top=w.dataset.py;
+      w.style.width=w.dataset.pw; w.style.height=w.dataset.ph;
+    } else {
+      w.dataset.max='1'; w.classList.add('maxed');
+      w.dataset.px=w.style.left; w.dataset.py=w.style.top;
+      w.dataset.pw=w.style.width; w.dataset.ph=w.style.height;
+      w.style.left='0'; w.style.top='0';
+      w.style.width='100%'; w.style.height='100%';
+    }
+  }
+
+  // ---- window controls + focus-on-click --------------------------------
+  wins.forEach(function(w){
+    w.addEventListener('pointerdown', function(){ focus(w); }, true);
+
+    // ---- resize grip (bottom-right corner) ----
+    var grip = document.createElement('div');
+    grip.className = 'resize-handle';
+    w.appendChild(grip);
+    grip.addEventListener('pointerdown', function(e){
+      if(w.dataset.max==='1') return;
+      e.stopPropagation();
+      focus(w);
+      var r = w.getBoundingClientRect();
+      var sx = e.clientX, sy = e.clientY, sw = r.width, sh = r.height;
+      grip.setPointerCapture(e.pointerId);
+      function move(ev){
+        var nw = Math.max(240, sw + (ev.clientX - sx));
+        var nh = Math.max(140, sh + (ev.clientY - sy));
+        nw = Math.min(nw, window.innerWidth  - r.left - 4);
+        nh = Math.min(nh, window.innerHeight - TASKBAR - r.top - 4);
+        w.style.width = nw+'px'; w.style.height = nh+'px';
+      }
+      function up(){ grip.removeEventListener('pointermove',move);
+        grip.removeEventListener('pointerup',up); }
+      grip.addEventListener('pointermove',move);
+      grip.addEventListener('pointerup',up);
+    });
+
+    var tb = w.querySelector('.titlebar');
+    tb.querySelectorAll('.tbtn').forEach(function(btn){
+      btn.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var a = btn.dataset.act;
+        if(a==='min') minimize(w);
+        else if(a==='max') toggleMax(w);
+        else if(a==='close') close(w);
+      });
+    });
+    tb.addEventListener('dblclick', function(e){
+      if(!e.target.closest('.tbtn')) toggleMax(w);
+    });
+
+    // ---- dragging ----
+    tb.addEventListener('pointerdown', function(e){
+      if(e.target.closest('.tbtn')) return;
+      if(w.dataset.max==='1') return;
+      focus(w);
+      var r = w.getBoundingClientRect();
+      var dx = e.clientX - r.left, dy = e.clientY - r.top;
+      tb.setPointerCapture(e.pointerId);
+      function move(ev){
+        var nx = ev.clientX - dx, ny = ev.clientY - dy;
+        nx = Math.max(0, Math.min(nx, window.innerWidth - 60));
+        ny = Math.max(0, Math.min(ny, window.innerHeight - TASKBAR - 22));
+        w.style.left = nx+'px'; w.style.top = ny+'px';
+      }
+      function up(){ tb.removeEventListener('pointermove',move);
+        tb.removeEventListener('pointerup',up); }
+      tb.addEventListener('pointermove',move);
+      tb.addEventListener('pointerup',up);
+    });
+  });
+
+  // ---- generic [data-open] / [data-act=close] triggers -----------------
+  document.querySelectorAll('[data-open]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var w = document.getElementById(el.dataset.open);
+      if(w) open(w);
+      closeStart(); closeMenus();
+    });
+  });
+  document.querySelectorAll('.client [data-act="close"]').forEach(function(el){
+    el.addEventListener('click', function(){ close(el.closest('.win')); });
+  });
+
+  // ---- desktop icon selection (single = select, dbl = open) ------------
+  document.querySelectorAll('.dicon').forEach(function(ic){
+    ic.addEventListener('click', function(e){
+      document.querySelectorAll('.dicon').forEach(function(o){o.classList.remove('sel');});
+      ic.classList.add('sel'); e.stopPropagation();
+    });
+    ic.addEventListener('dblclick', function(){
+      if(ic.dataset.open){ open(document.getElementById(ic.dataset.open)); }
+      if(ic.hasAttribute('data-recycle')){ alert('The Recycle Bin is empty.\n\n(No vulnerabilities were harmed.)'); }
+    });
+  });
+
+  // ---- start menu ------------------------------------------------------
+  function openStart(){ startMenu.classList.add('open'); startBtn.classList.add('open'); }
+  function closeStart(){ startMenu.classList.remove('open'); startBtn.classList.remove('open'); }
+  startBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    startMenu.classList.contains('open') ? closeStart() : openStart();
+  });
+  var LINKEDIN = 'https://www.linkedin.com/in/john-mcewan/', GITHUB = 'https://github.com/JDMcE';
+  function openExt(url){ window.open(url, '_blank', 'noopener'); }
+  startMenu.querySelector('[data-linkedin]').addEventListener('click', function(){
+    openExt(LINKEDIN); closeStart();
+  });
+  startMenu.querySelector('[data-github]').addEventListener('click', function(){
+    openExt(GITHUB); closeStart();
+  });
+  startMenu.querySelector('[data-shutdown]').addEventListener('click', function(){
+    closeStart(); document.getElementById('shutdown').classList.add('on');
+  });
+  document.getElementById('shutdown').addEventListener('click', function(){
+    this.classList.remove('on');
+  });
+  document.addEventListener('click', function(){ closeStart(); closeMenus();
+    document.querySelectorAll('.dicon').forEach(function(o){o.classList.remove('sel');});
+  });
+
+  // ---- menu bar dropdowns ---------------------------------------------
+  var menuItems = Array.prototype.slice.call(document.querySelectorAll('.mi'));
+  function closeMenus(){ menuItems.forEach(function(m){ m.classList.remove('open'); }); }
+  menuItems.forEach(function(mi){
+    mi.addEventListener('click', function(e){
+      e.stopPropagation();
+      var wasOpen = mi.classList.contains('open');
+      closeMenus();
+      if(!wasOpen) mi.classList.add('open');
+    });
+    mi.addEventListener('pointerenter', function(){
+      if(document.querySelector('.mi.open')){ closeMenus(); mi.classList.add('open'); }
+    });
+  });
+
+  // ---- dropdown item actions ------------------------------------------
+  function reloadFrame(w){ var f = w && w.querySelector('iframe'); if(f) f.src = f.src; }
+  document.querySelectorAll('.ditem').forEach(function(it){
+    it.addEventListener('click', function(e){
+      e.stopPropagation();
+      var w = it.closest('.win');
+      if(it.dataset.act === 'close')      close(w);
+      else if(it.hasAttribute('data-about'))  openAbout(w);
+      else if(it.hasAttribute('data-open'))   open(document.getElementById(it.dataset.open));
+      else if(it.hasAttribute('data-linkedin')) openExt(LINKEDIN);
+      else if(it.hasAttribute('data-reload')) reloadFrame(w);
+      else if(it.hasAttribute('data-print'))  window.print();
+      closeMenus();
+    });
+  });
+
+  // ---- About / modal dialog -------------------------------------------
+  var modalLayer = document.getElementById('modal-layer');
+  function openAbout(w){
+    var id = w ? w.id : '';
+    var title = document.getElementById('about-title');
+    var ico   = document.getElementById('about-ico');
+    var text  = document.getElementById('about-text');
+    if(id === 'win-netscape'){
+      title.textContent = 'About Netscape'; ico.textContent = '🌐';
+      text.innerHTML = '<h3>Netscape Navigator</h3><p>Gold Edition &mdash; Version 3.0</p>'+
+        '<p>Now displaying: JDMCE.com Web&nbsp;1.0 homepage</p><p>Best viewed @ 1024&times;768.</p>';
+    } else if(id === 'win-terminal'){
+      title.textContent = 'About Terminal'; ico.textContent = '📟';
+      text.innerHTML = '<h3>Terminal &mdash; JDMCE BBS</h3><p>ANSI-BBS 80&times;25 &middot; Node 1 of 1</p>'+
+        '<p>CONNECT 14400/ARQ/V.32bis</p><p>Sysop: john &middot; Glasgow, Scotland</p>';
+    } else {
+      title.textContent = 'About JDMCE.exe'; ico.textContent = '🛡️';
+      text.innerHTML = '<h3>JDMCE.exe</h3><p>Penetration Testing Suite&nbsp; Version 95</p>'+
+        '<p>John // JDMCE &mdash; Glasgow, Scotland</p><p>PraCSP &middot; CREST CRT &middot; CHECK Team Member &middot; SC Cleared</p>';
+    }
+    modalLayer.classList.add('on');
+  }
+  document.querySelectorAll('[data-modal-close]').forEach(function(b){
+    b.addEventListener('click', function(){ modalLayer.classList.remove('on'); });
+  });
+  modalLayer.addEventListener('click', function(e){
+    if(e.target === modalLayer) modalLayer.classList.remove('on');
+  });
+  startMenu.querySelector('[data-about]').addEventListener('click', function(){
+    closeStart(); openAbout(null);
+  });
+
+  // ---- boot / startup splash ------------------------------------------
+  var boot = document.getElementById('boot');
+  function endBoot(){ boot.classList.add('off'); setTimeout(function(){ boot.style.display='none'; }, 600); }
+  boot.addEventListener('click', endBoot);
+  setTimeout(endBoot, 2600);
+
+  // ---- clock -----------------------------------------------------------
+  function tick(){
+    var d=new Date(), h=d.getHours(), m=d.getMinutes();
+    var ap=h>=12?'PM':'AM'; h=h%12||12;
+    document.getElementById('clock').textContent='🔊 '+h+':'+(m<10?'0':'')+m+' '+ap;
+  }
+  tick(); setInterval(tick,10000);
+
+  // ---- init: fit windows into small viewports --------------------------
+  function fit(){
+    if(window.innerWidth < 720){
+      var y = 8;
+      wins.forEach(function(w){
+        if(w.dataset.max==='1') return;
+        w.style.left = '8px';
+        w.style.width = (window.innerWidth-16)+'px';
+      });
+    }
+  }
+  fit();
+  focus(document.getElementById('win-main'));
+  rebuildTasks();
+})();
+</script>
+
