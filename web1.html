@@ -1,0 +1,394 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JDMCE.com :: John's Cyber-Security Homepage!!!</title>
+<meta name="keywords" content="penetration testing, hacking, security, pentest, glasgow, network, web, active directory, cyber">
+<meta name="description" content="John's totally rad homepage for penetration testing and computer security. Glasgow, Scotland. Best viewed in Netscape.">
+
+<style>
+  /* ======================================================================
+     JDMCE.com — Web 1.0 / Geocities-era pentester homepage
+     Single self-contained file. No external assets (works offline).
+     ====================================================================== */
+
+  :root {
+    --ink:  #000000;
+    --paper:#c0c0c0;   /* classic silver */
+    --link: #0000ee;
+    --vlink:#551a8b;
+    --neon: #00ff00;
+    --amber:#ffcc00;
+    --hot:  #ff00ff;
+  }
+
+  html, body { margin:0; padding:0; }
+
+  body {
+    /* tiled "circuit" background drawn in CSS so no image file is needed */
+    background-color:#004040;
+    background-image:
+      linear-gradient(90deg, rgba(0,255,0,0.06) 1px, transparent 1px),
+      linear-gradient(0deg,  rgba(0,255,0,0.06) 1px, transparent 1px);
+    background-size: 16px 16px;
+    color: var(--ink);
+    font-family: "Times New Roman", Times, Georgia, serif;
+    font-size: 16px;
+    text-align:center;
+  }
+
+  a        { color: var(--link); }
+  a:visited{ color: var(--vlink); }
+  a:hover  { color: #ff0000; background:#ffff00; }
+
+  .page {
+    width: 780px;
+    max-width: 96%;
+    margin: 8px auto 24px auto;
+    background: var(--paper);
+    border: 4px ridge #808080;
+    text-align: left;
+  }
+
+  /* --- top marquee ----------------------------------------------------- */
+  .toproll {
+    background:#000; color:var(--neon);
+    font-family:"Courier New",monospace; font-size:13px;
+    border-bottom:2px solid var(--neon);
+    overflow:hidden; white-space:nowrap; padding:4px 0;
+  }
+  .toproll span {
+    display:inline-block; padding-left:100%;
+    animation: scroll-left 22s linear infinite;
+  }
+  @keyframes scroll-left { to { transform: translateX(-100%); } }
+
+  /* --- title banner ---------------------------------------------------- */
+  .banner {
+    background:#000;
+    text-align:center; padding:14px 6px 10px 6px;
+    border-bottom:4px double #808080;
+  }
+  .banner h1 {
+    margin:0; font-family:"Impact","Arial Black",sans-serif;
+    font-size:46px; letter-spacing:2px; line-height:1;
+    color:var(--neon);
+    text-shadow: 2px 2px 0 #006000, 3px 3px 6px #00ff00;
+  }
+  .banner .sub {
+    color:var(--amber); font-family:"Courier New",monospace;
+    font-size:13px; margin-top:6px;
+  }
+  .blink { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* --- construction bar ------------------------------------------------ */
+  .construction {
+    height:22px;
+    background: repeating-linear-gradient(45deg,
+      #ffcc00 0 14px, #000 14px 28px);
+    border-top:2px solid #000; border-bottom:2px solid #000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .construction span {
+    background:#000; color:#ffcc00; font-family:"Courier New",monospace;
+    font-size:12px; font-weight:bold; padding:1px 10px; letter-spacing:1px;
+  }
+
+  /* --- layout table ---------------------------------------------------- */
+  table.layout { width:100%; border-collapse:collapse; }
+  table.layout > tbody > tr > td { vertical-align:top; }
+
+  .nav {
+    width:172px; background:#000080; color:#fff;
+    padding:10px 8px; border-right:4px ridge #808080;
+  }
+  .nav h3 {
+    margin:0 0 6px 0; color:var(--amber);
+    font-family:"Courier New",monospace; font-size:14px;
+    border-bottom:1px dashed #ff0; padding-bottom:3px;
+  }
+  .nav a {
+    display:block; color:#00ffff; text-decoration:none;
+    font-family:"Courier New",monospace; font-size:13px;
+    padding:3px 4px; margin:1px 0;
+  }
+  .nav a:hover { background:#00ffff; color:#000080; }
+  .nav .divider { border-top:1px solid #4040a0; margin:8px 0; }
+
+  .content { padding:14px 18px; }
+
+  h2.section {
+    font-family:"Courier New",monospace; font-size:20px;
+    color:#000080; background:#e8e8e8;
+    border-left:8px solid #ff00ff; padding:4px 8px; margin:20px 0 8px 0;
+  }
+  h2.section:first-child { margin-top:0; }
+
+  p.lead { font-size:17px; line-height:1.5; }
+
+  /* fake window chrome for the "shell" box */
+  .win {
+    border:2px outset #fff; background:var(--paper); margin:10px 0;
+  }
+  .win .bar {
+    background:#000080; color:#fff; font-family:"Courier New",monospace;
+    font-size:12px; font-weight:bold; padding:2px 6px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .win .bar .btns b {
+    display:inline-block; width:12px; height:12px; line-height:12px;
+    text-align:center; background:var(--paper); color:#000;
+    border:1px outset #fff; font-size:9px; margin-left:2px;
+  }
+  .shell {
+    background:#000; color:var(--neon);
+    font-family:"Courier New",monospace; font-size:13px;
+    padding:8px 10px; white-space:pre-wrap; line-height:1.35;
+  }
+  .shell .p { color:#00ffff; }
+  .shell .c { color:#ffff00; }
+  .shell .cur { animation: blink 1s steps(1) infinite; }
+
+  /* data tables (skills/certs/etc) */
+  table.data { border-collapse:collapse; width:100%; margin:6px 0; }
+  table.data td {
+    border:1px solid #808080; padding:4px 8px;
+    font-family:"Courier New",monospace; font-size:13px;
+  }
+  table.data td.k {
+    background:#000080; color:var(--amber); font-weight:bold;
+    width:120px; white-space:nowrap;
+  }
+  table.data td.v { background:#fff; }
+
+  ul.bullets { list-style:none; padding-left:4px; }
+  ul.bullets li { margin:4px 0; font-size:15px; }
+  ul.bullets li:before { content:"\25B6  "; color:#ff00ff; }
+
+  /* visitor counter */
+  .counter {
+    display:inline-block; background:#000; padding:3px;
+    border:2px inset #808080;
+  }
+  .counter b {
+    display:inline-block; width:18px; color:#00ff00; background:#001800;
+    font-family:"Courier New",monospace; font-size:20px; font-weight:bold;
+    text-align:center; margin:0 1px; border:1px solid #003000;
+  }
+
+  /* buttons row (88x31 badges) */
+  .badges { text-align:center; margin:8px 0; }
+  .badge {
+    display:inline-block; width:88px; height:31px; margin:3px;
+    border:1px solid #fff; font-family:"Courier New",monospace;
+    font-size:9px; line-height:1.05; color:#fff; text-decoration:none;
+    box-sizing:border-box; padding:3px 4px; text-align:center;
+    vertical-align:middle; overflow:hidden;
+  }
+  .b1{background:#000;color:#0f0;border-color:#0f0;}
+  .b2{background:#0000aa;color:#ff0;}
+  .b3{background:#aa0000;color:#fff;}
+  .b4{background:#000;color:#0ff;border-color:#0ff;}
+  .b5{background:#550088;color:#fff;}
+
+  /* webring */
+  .webring {
+    background:#e8e8e8; border:2px groove #808080; padding:8px;
+    text-align:center; font-family:"Courier New",monospace; font-size:12px;
+    margin:12px 0;
+  }
+
+  /* footer */
+  .footer {
+    background:#000; color:#c0c0c0; text-align:center;
+    font-family:"Courier New",monospace; font-size:11px;
+    padding:10px 8px; border-top:4px double #808080;
+  }
+  .footer a { color:#00ffff; }
+
+  hr.rainbow {
+    height:5px; border:0;
+    background:linear-gradient(90deg,red,orange,yellow,#0f0,#0ff,blue,#f0f,red);
+  }
+
+  .small { font-size:11px; color:#404040; }
+
+  @media (max-width:640px){
+    .nav{ width:auto; display:block; border-right:0; border-bottom:4px ridge #808080; }
+    table.layout, table.layout tbody, table.layout tr, table.layout td { display:block; width:auto; }
+    .banner h1{ font-size:32px; }
+  }
+</style>
+
+<div class="page">
+
+  <!-- scrolling news ticker -->
+  <div class="toproll">
+    <span>*** WELCOME TO JDMCE.COM ***&nbsp;&nbsp;+++ this site is best viewed in Netscape Navigator 4.0 @ 1024x768 +++&nbsp;&nbsp;&gt;&gt;&gt; NOW HACKING: networks / web apps / active directory / cloud / mobile &lt;&lt;&lt;&nbsp;&nbsp;!!! sign my guestbook !!!&nbsp;&nbsp;--- PraCSP * CREST CRT * CHECK TEAM MEMBER * SC CLEARED ---&nbsp;&nbsp;</span>
+  </div>
+
+  <!-- title -->
+  <div class="banner">
+    <h1>J D M C E . com</h1>
+    <div class="sub">&#9608; John's Penetration Testing &amp; Computer Security HomePage &#9608; <span class="blink">_</span></div>
+  </div>
+
+  <div class="construction">
+    <span>&#9888; U N D E R &nbsp; C O N S T R U C T I O N &nbsp; &#9888; PARDON OUR DUST &#9888;</span>
+  </div>
+
+  <!-- main layout -->
+  <table class="layout"><tbody><tr>
+
+    <!-- LEFT NAV -->
+    <td class="nav">
+      <h3>&gt; NAViGATE</h3>
+      <a href="#home">[*] Home</a>
+      <a href="#about">[*] About Me</a>
+      <a href="#skills">[*] My Skillz</a>
+      <a href="#certs">[*] Certifications</a>
+      <a href="#experience">[*] Experience</a>
+      <a href="#contact">[*] Contact / Links</a>
+
+      <div class="divider"></div>
+      <h3>&gt; STATUS</h3>
+      <a href="#" onclick="return false" style="color:#0f0">&#9679; ONLINE</a>
+      <a href="#" onclick="return false" style="color:#ff0">&#9888; caffeinated</a>
+
+      <div class="divider"></div>
+      <h3>&gt; COOL LINKS</h3>
+      <a href="#" onclick="return false">OWASP</a>
+      <a href="#" onclick="return false">The Metasploit</a>
+      <a href="#" onclick="return false">Nmap.ORG</a>
+      <a href="#" onclick="return false">phrack #49</a>
+
+      <div class="divider"></div>
+      <div style="text-align:center;color:#ff0;font-family:'Courier New',monospace;font-size:11px;">
+        VISITOR NO.
+        <div style="margin-top:4px" class="counter">
+          <b>0</b><b>0</b><b>1</b><b>3</b><b>3</b><b>7</b>
+        </div>
+      </div>
+    </td>
+
+    <!-- MAIN CONTENT -->
+    <td class="content">
+
+      <a name="home"></a>
+      <h2 class="section">&gt;_ whoami</h2>
+
+      <div class="win">
+        <div class="bar">
+          <span>C:\WINDOWS\system32\cmd.exe</span>
+          <span class="btns"><b>_</b><b>&#9633;</b><b>x</b></span>
+        </div>
+        <div class="shell"><span class="p">C:\Users\john&gt;</span> <span class="c">whoami /priv</span>
+
+USER:   john @ JDMCE
+ROLE:   Penetration Tester  (Glasgow, Scotland)
+CREST:  CRT  |  CHECK Team Member  |  SC Cleared
+UKCSC:  PraCSP (Practitioner Cyber Security Professional)
+
+<span class="p">C:\Users\john&gt;</span> <span class="cur">&#9608;</span></div>
+      </div>
+
+      <p class="lead">
+        I'm John, a penetration tester based in <b>Glasgow</b>. Most of my
+        work is infrastructure, web applications and Active Directory, with
+        some cloud and mobile. Outside of work I'm usually doing CTFs or
+        building my own tooling, lately around AI and offensive security.
+      </p>
+
+      <hr class="rainbow">
+
+      <a name="about"></a>
+      <h2 class="section">&gt;_ about_me.txt</h2>
+      <ul class="bullets">
+        <li>Infrastructure, web app and AD testing, plus cloud and mobile.</li>
+        <li>CTFs and custom tooling in my spare time, mostly Python and Go.</li>
+        <li>Registered with the <b>UK Cyber Security Council</b> as a Practitioner (<b>PraCSP</b>).</li>
+      </ul>
+
+      <a name="skills"></a>
+      <h2 class="section">&gt;_ my_sk1llz</h2>
+      <table class="data"><tbody>
+        <tr><td class="k">network</td><td class="v">nmap &middot; responder &middot; ntlmrelayx &middot; netexec &middot; impacket</td></tr>
+        <tr><td class="k">web</td><td class="v">burp suite &middot; owasp asvs &middot; sqlmap &middot; ffuf &middot; nuclei</td></tr>
+        <tr><td class="k">active dir</td><td class="v">bloodhound &middot; certipy &middot; kerberoasting &middot; ad cs (esc1/4/8)</td></tr>
+        <tr><td class="k">cloud</td><td class="v">azure &middot; entra id &middot; scoutsuite &middot; conditional-access review</td></tr>
+        <tr><td class="k">mobile</td><td class="v">frida &middot; objection &middot; apk re &middot; ssl-pinning bypass (android)</td></tr>
+        <tr><td class="k">languages</td><td class="v">python &middot; go &middot; bash</td></tr>
+      </tbody></table>
+
+      <a name="certs"></a>
+      <h2 class="section">&gt;_ certifications</h2>
+      <table class="data"><tbody>
+        <tr><td class="k">PraCSP</td><td class="v">practitioner cyber security professional (uk cyber security council)</td></tr>
+        <tr><td class="k">CREST CRT</td><td class="v">registered penetration tester</td></tr>
+        <tr><td class="k">CHECK</td><td class="v">ncsc check team member</td></tr>
+        <tr><td class="k">SC Cleared</td><td class="v">uk security clearance</td></tr>
+      </tbody></table>
+
+      <a name="experience"></a>
+      <h2 class="section">&gt;_ experience</h2>
+      <table class="data"><tbody>
+        <tr><td class="k">sectors</td><td class="v">financial services &middot; healthcare &middot; manufacturing &middot; retail</td></tr>
+        <tr><td class="k">assessments</td><td class="v">internal &amp; external infra &middot; web &amp; mobile &middot; cloud &middot; ad</td></tr>
+        <tr><td class="k">reviews</td><td class="v">build &amp; config &middot; firewall rulebase &middot; cloud posture</td></tr>
+        <tr><td class="k">reporting</td><td class="v">clear findings, with steps to reproduce and fix</td></tr>
+      </tbody></table>
+
+      <hr class="rainbow">
+
+      <a name="contact"></a>
+      <h2 class="section">&gt;_ contact_me</h2>
+      <table class="data"><tbody>
+        <tr><td class="k">location</td><td class="v">Glasgow, Scotland &#127988;&#917607;&#917602;&#917619;&#917571;&#917620;&#917631;</td></tr>
+        <tr><td class="k">github</td><td class="v"><a href="https://github.com/JDMcE" target="_blank" rel="noopener">github.com/JDMcE</a></td></tr>
+        <tr><td class="k">linkedin</td><td class="v"><a href="https://www.linkedin.com/in/john-mcewan/" target="_blank" rel="noopener">linkedin.com/in/john-mcewan</a></td></tr>
+      </tbody></table>
+      <p style="text-align:center;">
+        <a href="https://www.linkedin.com/in/john-mcewan/" target="_blank" rel="noopener" style="font-family:'Courier New',monospace;font-weight:bold;">
+          &#9993; &nbsp;C L I C K &nbsp;H E R E &nbsp;T O &nbsp;M E S S A G E &nbsp;M E ! &nbsp;&#9993;
+        </a>
+      </p>
+
+      <!-- 88x31 buttons -->
+      <div class="badges">
+        <a href="#" onclick="return false" class="badge b1">MADE ON<br>A LINUX BOX</a>
+        <a href="#" onclick="return false" class="badge b4">NETSCAPE<br>NOW!</a>
+        <a href="#" onclick="return false" class="badge b3">NO<br>SCRIPT KIDDIES</a>
+        <a href="#" onclick="return false" class="badge b2">POWERED BY<br>CAFFEINE</a>
+        <a href="#" onclick="return false" class="badge b5">HACK<br>THE PLANET</a>
+      </div>
+
+      <!-- webring -->
+      <div class="webring">
+        &laquo; &nbsp;<a href="#" onclick="return false">[ prev ]</a> &nbsp;
+        This site is a proud member of the<br>
+        <b>&#9673; INFOSEC WEBRiNG &#9673;</b><br>
+        <a href="#" onclick="return false">[ next ]</a> &nbsp; | &nbsp;
+        <a href="#" onclick="return false">[ random ]</a> &nbsp; | &nbsp;
+        <a href="#" onclick="return false">[ list all ]</a>&nbsp; &raquo;
+      </div>
+
+      <p style="text-align:center;">
+        <a href="#" onclick="alert('Guestbook coming soon! Bookmark this page (CTRL+D)!');return false"
+           style="font-family:'Courier New',monospace;font-weight:bold;">
+          &#9997; Sign My Guestbook</a> &nbsp;|&nbsp;
+        <a href="#" onclick="alert('Guestbook coming soon!');return false"
+           style="font-family:'Courier New',monospace;font-weight:bold;">View Guestbook</a>
+      </p>
+
+    </td>
+  </tr></tbody></table>
+
+  <!-- footer -->
+  <div class="footer">
+    &copy; 1998&ndash;2026 JDMCE.com &mdash; all rights reserved &nbsp;|&nbsp; Hand-coded in Notepad &nbsp;|&nbsp;
+    <span class="blink" style="color:#0f0">This page has no cookies, only exploits.</span><br>
+    Last updated: <script>document.write(new Date().toDateString());</script> &nbsp;|&nbsp;
+    Best viewed @ 1024x768 in <a href="#" onclick="return false">Netscape</a> or <a href="#" onclick="return false">IE 4+</a><br>
+    <span class="small" style="color:#606060">&#9760; Unauthorized access is prohibited &middot; Authorized testing only &#9760;</span>
+  </div>
+
+</div>

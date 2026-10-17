@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TGM Web</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <canvas id="screen" aria-label="Game screen"></canvas>
+
+  <section id="menu">
+    <div class="col">
+      <h1>TGM<span>WEB</span></h1>
+      <p class="sub">Arcade-timed TGM2 and TGM3 modes, 60 frames per second.</p>
+      <div id="modes"></div>
+    </div>
+    <div class="col side">
+      <div id="rule">
+        <h2>Rule</h2>
+        <div class="toggle">
+          <button id="rule-classic">Classic</button>
+          <button id="rule-world">World</button>
+        </div>
+        <p id="rule-note"></p>
+      </div>
+      <div id="qual">
+        <h2>Qualified grade</h2>
+        <div class="qual"><strong id="qual-grade"></strong><p><span id="qual-note"></span><br><span id="qual-history"></span></p></div>
+        <button id="qual-reset" class="ghost">Reset qualification</button>
+      </div>
+      <h2>Controls</h2>
+      <div id="keys"></div>
+      <div class="row">
+        <button id="keys-reset" class="ghost">Reset keys</button>
+        <button id="mute" class="ghost">Sound: on</button>
+      </div>
+      <p class="hint">↑ ↓ choose mode · ← → change rule · Enter start<br>In game: P pause · Esc menu</p>
+    </div>
+  </section>
+</main>
+<script src="js/core.js"></script>
+<script src="js/modes.js"></script>
+<script src="js/exam.js"></script>
+<script src="js/render.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JDMCE // node 1 // CONNECT 14400</title>
+<meta name="description" content="John — penetration tester, Glasgow. BBS-style homepage.">
+
+<style>
+  /* ======================================================================
+     JDMCE.com — BBS / ANSI text-mode edition
+     80-column DOS terminal look. Self-contained, works offline.
+     ====================================================================== */
+  :root{
+    --bg:#0a0a0a; --fg:#00cc33; --hi:#00ff41;
+    --cyan:#00e5e5; --yel:#ffe000; --wht:#e6e6e6;
+    --red:#ff4040; --mag:#ff5fd2; --dim:#0a5a20; --blue:#3a6fff;
+  }
+  html,body{margin:0;padding:0;background:#000;}
+  body{
+    background:radial-gradient(ellipse at center,#04140a 0%,#000 100%);
+    color:var(--fg);
+    font-family:"Consolas","DejaVu Sans Mono","Courier New",monospace;
+    font-size:15px; line-height:1.35;
+    padding:22px 10px 60px; display:flex; justify-content:center;
+  }
+  /* CRT scanlines + flicker overlay */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9;
+    background:repeating-linear-gradient(0deg,
+      rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.28) 3px, rgba(0,0,0,0) 4px);
+    mix-blend-mode:multiply;
+  }
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:8;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);
+    animation:flick 6s infinite steps(60);
+  }
+  @keyframes flick{ 0%,97%{opacity:1} 98%{opacity:.85} 100%{opacity:1} }
+
+  .screen{
+    width:82ch; max-width:100%;
+    text-shadow:0 0 3px rgba(0,255,65,.55);
+    white-space:pre-wrap; word-break:break-word;
+  }
+  pre{ margin:0; font:inherit; white-space:pre; overflow-x:auto; }
+
+  .hi{color:var(--hi);font-weight:bold} .cy{color:var(--cyan)}
+  .ye{color:var(--yel)} .wh{color:var(--wht)} .rd{color:var(--red)}
+  .mg{color:var(--mag)} .dm{color:var(--dim)} .bl{color:var(--blue)}
+  b{color:var(--hi)}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted var(--cyan)}
+  a:hover{background:var(--cyan);color:#000;text-shadow:none}
+
+  .blink{animation:bl 1s steps(1) infinite}
+  @keyframes bl{50%{opacity:0}}
+
+  .bar{background:var(--cyan);color:#000;text-shadow:none;font-weight:bold}
+  .barsel{background:var(--yel);color:#000;text-shadow:none;font-weight:bold}
+
+  h1,h2,h3{all:unset}
+
+  .menu b{display:inline-block}
+  .prompt{color:var(--hi)}
+  hr{border:0;border-top:1px solid var(--dim);margin:2px 0}
+
+  /* --- modem dial-in sequence --- */
+  #dialpre{ margin:0; }
+  .curs{ animation:bl 1s steps(1) infinite; }
+  #mainpre.dialing{ clip-path:inset(0 0 100% 0); }
+  #mainpre.go{ animation:paint 2s steps(36) forwards; }
+  @keyframes paint{ from{ clip-path:inset(0 0 100% 0);} to{ clip-path:inset(0 0 0 0);} }
+</style>
+
+<div class="screen"><pre id="dialpre"></pre><pre id="mainpre">
+<span class="cy">╔══════════════════════════════════════════════════════════════════════════════╗</span>
+<span class="cy">║</span>                                                                              <span class="cy">║</span>
+<span class="cy">║</span>   <span class="hi">░░░░░  ░░░░  ░   ░  ░░░░  ░░░░</span>       <span class="ye">J D M C E   / /   N O D E   1</span>       <span class="cy">║</span>
+<span class="cy">║</span>   <span class="hi">  ░    ░  ░  ░░ ░░ ░     ░   </span>                                              <span class="cy">║</span>
+<span class="cy">║</span>   <span class="hi">  ░    ░  ░  ░ ░ ░ ░░░   ░░░ </span>    <span class="wh">- The Underground Security Board -</span>       <span class="cy">║</span>
+<span class="cy">║</span>   <span class="hi">░ ░    ░  ░  ░   ░ ░     ░   </span>                                              <span class="cy">║</span>
+<span class="cy">║</span>   <span class="hi">░░░    ░░░░  ░   ░  ░░░░  ░░░░</span>    <span class="dm">sysop:</span> <span class="ye">john</span>  <span class="dm">loc:</span> <span class="ye">glasgow, scotland</span>    <span class="cy">║</span>
+<span class="cy">║</span>                                                                              <span class="cy">║</span>
+<span class="cy">╚══════════════════════════════════════════════════════════════════════════════╝</span>
+
+<span class="dm">─────────────────────────────────────────────────────────────────────────────</span>
+  <span class="wh">Welcome, GUEST.</span>  You are caller # <span class="ye">1337</span>.   Time online: <span class="ye">00:03:14</span>   <span class="hi blink">█</span>
+<span class="dm">─────────────────────────────────────────────────────────────────────────────</span>
+
+  <span class="prompt">login as:</span> <span class="hi">whoami</span>
+  <span class="prompt">access :</span> <span class="hi">GRANTED</span>  <span class="dm">[ level: recruiter // read-only ]</span>
+
+
+<span class="ye"> ┌─[ M A I N   M E N U ]────────────────────────────────────────────────────┐</span>
+<span class="ye"> │</span>                                                                          <span class="ye">│</span>
+<span class="ye"> │</span>   <span class="bar"> A </span> <a href="#about">About the Sysop</a>            <span class="bar"> S </span> <a href="#skills">Skill Matrix / Arsenal</a>          <span class="ye">│</span>
+<span class="ye"> │</span>   <span class="bar"> C </span> <a href="#certs">Certifications</a>             <span class="bar"> X </span> <a href="#exp">Experience Logs</a>                 <span class="ye">│</span>
+<span class="ye"> │</span>   <span class="bar"> M </span> <a href="#contact">Leave Mail to Sysop</a>        <span class="barsel"> G </span> <a href="#contact">Goodbye / Hang Up</a>               <span class="ye">│</span>
+<span class="ye"> │</span>                                                                          <span class="ye">│</span>
+<span class="ye"> └──────────────────────────────────────────────────────────────────────────┘</span>
+
+
+<a name="about"></a><span class="cy">▓▓▓ [ A ] ABOUT THE SYSOP ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</span>
+
+  <span class="wh">I'm John, a penetration tester based in <b>Glasgow</b>.</span>
+
+  Most of my work is infrastructure, web apps and Active Directory, with
+  some cloud and mobile. Outside of work I'm usually doing CTFs or
+  building my own tooling, lately around AI and offensive security.
+
+  <span class="dm">> registered with the UK Cyber Security Council as a</span> <span class="ye">PRACTITIONER</span> <span class="dm">[ PraCSP ]</span>
+
+
+<a name="skills"></a><span class="cy">▓▓▓ [ S ] SKILL MATRIX / ARSENAL ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</span>
+
+  <span class="ye">NETWORK   </span> <span class="dm">::</span> nmap · responder · ntlmrelayx · netexec · impacket
+  <span class="ye">WEB       </span> <span class="dm">::</span> burp suite · owasp asvs · sqlmap · ffuf · nuclei
+  <span class="ye">ACTIVE DIR</span> <span class="dm">::</span> bloodhound · certipy · kerberoasting · ad cs (esc1/4/8)
+  <span class="ye">CLOUD     </span> <span class="dm">::</span> azure · entra id · scoutsuite · conditional-access review
+  <span class="ye">MOBILE    </span> <span class="dm">::</span> frida · objection · apk re · ssl-pinning bypass (android)
+  <span class="ye">LANGUAGES </span> <span class="dm">::</span> python · go · bash
+
+
+<a name="certs"></a><span class="cy">▓▓▓ [ C ] CERTIFICATIONS ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</span>
+
+  <span class="hi">[X]</span> <span class="wh">PraCSP</span> ............... practitioner cyber security professional (ukcsc)
+  <span class="hi">[X]</span> <span class="wh">CREST CRT</span> ............ registered penetration tester
+  <span class="hi">[X]</span> <span class="wh">CHECK Team Member</span> .... ncsc check scheme
+  <span class="hi">[X]</span> <span class="wh">SC Cleared</span> ........... uk security clearance
+
+
+<a name="exp"></a><span class="cy">▓▓▓ [ X ] EXPERIENCE LOGS ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</span>
+
+  <span class="ye">SECTORS    </span> financial services · healthcare · manufacturing · retail
+  <span class="ye">ASSESSMENTS</span> internal &amp; external infra · web &amp; mobile · cloud · ad
+  <span class="ye">REVIEWS    </span> build &amp; config · firewall rulebase · cloud posture
+  <span class="ye">REPORTING  </span> clear findings, with steps to reproduce and fix
+
+
+<a name="contact"></a><span class="cy">▓▓▓ [ M ] LEAVE MAIL TO SYSOP ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</span>
+
+  <span class="ye">LOCATION</span> <span class="dm">></span> glasgow, scotland
+  <span class="ye">GITHUB  </span> <span class="dm">></span> <a href="https://github.com/JDMcE" target="_blank" rel="noopener">github.com/JDMcE</a>
+  <span class="ye">LINKEDIN</span> <span class="dm">></span> <a href="https://www.linkedin.com/in/john-mcewan/" target="_blank" rel="noopener">linkedin.com/in/john-mcewan</a>   <span class="dm">( dm me here )</span>
+
+
+<span class="dm">─────────────────────────────────────────────────────────────────────────────</span>
+  <span class="prompt">Command?</span> <span class="hi">G</span>
+
+  <span class="wh">Thanks for calling JDMCE // Node 1.</span>  <span class="dm">Authorized testing only. Hack responsibly.</span>
+  <span class="rd">NO CARRIER</span> <span class="hi blink">█</span>
+<span class="dm">─────────────────────────────────────────────────────────────────────────────</span>
+</pre></div>
+
+<script>
+(function(){
+  var out  = document.getElementById('dialpre');
+  var main = document.getElementById('mainpre');
+  main.classList.add('dialing');
+
+  var cur = document.createElement('span');
+  cur.className = 'curs'; cur.textContent = '█';
+  out.appendChild(cur);
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function put(cls, ch){
+    var s = document.createElement('span');
+    if(cls) s.className = cls;
+    s.textContent = ch;
+    out.insertBefore(s, cur);
+  }
+  async function type(cls, txt, cps){
+    var d = 1000 / cps;
+    for(var i=0;i<txt.length;i++){ put(cls, txt.charAt(i)); await sleep(d + Math.random()*d*0.7); }
+  }
+  async function dots(cls, n, ms){
+    for(var i=0;i<n;i++){ put(cls, '.'); await sleep(ms); }
+  }
+  // modem handshake screech, rendered as flickering garbage
+  async function screech(cls, ms){
+    var chars = '▒░▓█@#%&*+=~/\\|<>?!';
+    var s = document.createElement('span');
+    s.className = cls;
+    out.insertBefore(s, cur);
+    var end = Date.now() + ms;
+    while(Date.now() < end){
+      var t = '';
+      for(var i=0;i<30;i++){ t += chars.charAt(Math.floor(Math.random()*chars.length)); }
+      s.textContent = t;
+      await sleep(55);
+    }
+    s.remove();
+  }
+
+  async function run(){
+    await sleep(500);
+    await type('dm', 'ATZ', 20);              put('hi', '   OK\n');     await sleep(260);
+    await type('dm', 'ATDT ', 20);
+    await type('hi', '5551337', 10);          put('dm', '\n');          await sleep(520);
+    await type('dm', 'DIALING JDMCE.COM ', 55);
+    await dots('dm', 6, 250);                 put('dm', '\n');          await sleep(220);
+    await type('ye', 'RING…   ', 26);    await sleep(360);
+    await type('ye', 'RING…\n', 26);     await sleep(300);
+    await type('dm', 'CARRIER … ', 26);
+    await screech('rd', 800);                 put('hi', ' DETECTED\n'); await sleep(220);
+    put('hi', 'CONNECT 14400/ARQ/V.32bis\n'); await sleep(320);
+    put('dm', 'HANDSHAKE OK. TERMINAL: ANSI-BBS 80x25. NODE 1 OF 1.\n');
+    await sleep(360);
+    cur.remove();
+    main.classList.add('go');
+  }
+  run();
+})();
+</script>
